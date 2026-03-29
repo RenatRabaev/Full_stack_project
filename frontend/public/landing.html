@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <!--
+    דף בית סטטי: הירו, קרוסלת משתמשים (רשומים+דמו), כרטיסי תכונה לחיצים (פרופיל/פיד/בקשות חברות),
+    דמו צ'אט מתחלף, כותרת עם מצב אורח/מחובר (static-user-nav). ללא מחובר — כרטיסי תכונה שומרים יעד ל-login.
+  -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="רשת חברתית קטנה — משתמשים, פרופילים, פוסטים, חברויות וצ'אט בזמן אמת. ממשק מודרני, צד לקוח–שרת ומסד נתונים."
+    />
+    <meta name="theme-color" content="#5b5bd6" />
+    <title>רשת חברתית — דף הבית</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./landing.css" />
+  </head>
+  <body>
+    <!-- נגישות: דילוג ישירות לתוכן הראשי -->
+    <a class="visually-hidden" href="#main">דלג לתוכן הראשי</a>
+
+    <!-- מיכל עמוד: כותרת + תוכן + פוטר -->
+    <div class="page">
+      <!-- כותרת: לוגו, ניווט משני (דף הבית, פיד…), התחברות/חשבון -->
+      <header class="site-header site-header--inner">
+        <div class="site-header__row">
+          <a class="logo" href="./landing.html">רשת חברתית</a>
+          <nav class="site-nav" aria-label="ניווט משני">
+            <a href="./landing.html" aria-current="page">דף הבית</a>
+            <a href="./feed.html">פיד</a>
+            <a href="./login.html">התחברות</a>
+            <a href="./register.html">הרשמה</a>
+            <a href="./profile.html">פרופיל</a>
+            <a href="./about.html">אודות</a>
+          </nav>
+          <nav class="nav-actions nav-actions--with-user" aria-label="חשבון">
+            <div class="static-header-mode" id="staticHeaderGuest">
+              <a class="btn btn--ghost" href="./login.html">התחברות</a>
+              <a class="btn btn--primary" href="./register.html">הרשמה</a>
+            </div>
+            <div class="static-header-mode" id="staticHeaderUser" hidden>
+              <a class="btn btn--ghost" href="./login.html" id="staticLogout">התנתקות</a>
+              <a class="static-user static-user--link" id="staticUserChip" href="./profile.html" aria-live="polite">
+                <span class="static-user__avatar" aria-hidden="true">
+                  <span class="static-user__initials" id="staticUserInitials">?</span>
+                </span>
+                <span class="static-user__name" id="staticUserName">משתמש</span>
+              </a>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      <main id="main">
+        <!-- הירו: כותרת ראשית, תיאור הפרויקט, כפתורי קריאה לפעולה -->
+        <section class="hero" aria-labelledby="hero-title">
+          <p class="hero__badge">פרויקט גמר · Full Stack</p>
+          <h1 id="hero-title" class="hero__title">
+            רשת חברתית קטנה עם <span>ממשק מודרני</span>
+          </h1>
+          <p class="hero__lead">
+            המערכת מדמה סביבת אינטראקציה חברתית בסיסית: משתמשים, פרופילים אישיים, פוסטים, ניהול בקשות חברות,
+            ותקשורת בזמן אמת — צ'אט פרטי וקבוצתי. הכול מחובר בין צד לקוח לשרת, עם אחסון נתונים במסד נתונים.
+          </p>
+          <div class="hero__cta">
+            <a class="btn btn--primary" href="./register.html">התחל עכשיו</a>
+            <a class="btn btn--outline" href="./feed.html">לפיד</a>
+          </div>
+        </section>
+
+        <!-- תכונות: קרוסלת משתמשים + שלושה כרטיסים לחיצים (ניווט/התחברות) + כרטיס צ'אט רחב -->
+        <section class="features-section" aria-label="יכולות המערכת">
+          <div class="features">
+            <!-- כרטיס מערכת משתמשים: קרוסלה / מצב ריק עם קישור להרשמה -->
+            <article class="feature feature--users-carousel" aria-labelledby="users-carousel-title">
+              <div class="feature-users-carousel__top">
+                <div class="feature__icon feature-users-carousel__icon" aria-hidden="true">👤</div>
+                <h3 id="users-carousel-title">מערכת משתמשים</h3>
+              </div>
+              <div class="user-cards-carousel" id="userCardsCarousel" hidden tabindex="0" aria-roledescription="קרוסלה">
+                <button type="button" class="user-cards-carousel__nav" id="userCarouselPrev" aria-label="המשתמש הקודם">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                    <path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+                <div class="user-cards-carousel__panel" dir="rtl">
+                  <div class="landing-user-deck" id="userCarouselDeck"></div>
+                  <p class="user-cards-carousel__index" id="userCarouselIndex" aria-live="polite"></p>
+                </div>
+                <button type="button" class="user-cards-carousel__nav" id="userCarouselNext" aria-label="המשתמש הבא">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+              </div>
+              <div class="user-cards-carousel__empty" id="userCarouselEmpty">
+                <p>עדיין אין משתמשים רשומים. אחרי הרשמה יופיעו כאן.</p>
+                <a class="btn btn--primary user-cards-carousel__empty-cta" href="./register.html">הרשמה</a>
+              </div>
+            </article>
+
+            <article
+              class="feature feature--clickable"
+              data-landing-go="profile"
+              tabindex="0"
+              role="button"
+              aria-label="עבור לאזור הפרופיל"
+            >
+              <div class="feature__icon" aria-hidden="true">🪪</div>
+              <h3>פרופילים אישיים</h3>
+              <p>תצוגת פרטים אישיים, תמונת פרופיל וביוגרפיה, ואפשרות לעדכן את הפרופיל שלך בכל עת.</p>
+            </article>
+
+            <article
+              class="feature feature--clickable"
+              data-landing-go="feed"
+              tabindex="0"
+              role="button"
+              aria-label="עבור לפיד והעלאת פוסטים"
+            >
+              <div class="feature__icon" aria-hidden="true">📷</div>
+              <h3>העלאת פוסטים</h3>
+              <p>יצירת פוסטים עם טקסט ותמונה, לייקים ותגובות — פיד חברתי שמחבר בין משתמשים וחברים.</p>
+            </article>
+
+            <article
+              class="feature feature--clickable"
+              data-landing-go="requests"
+              tabindex="0"
+              role="button"
+              aria-label="עבור לפרופיל — בקשות חברות"
+            >
+              <div class="feature__icon" aria-hidden="true">🤝</div>
+              <h3>ניהול בקשות חברות</h3>
+              <p>חיפוש משתמשים, שליחת בקשות, אישור או דחייה, ורשימת חברים לפעילות חברתית.</p>
+            </article>
+
+            <article class="feature feature--wide feature--chat-live" aria-labelledby="chat-live-title">
+              <div class="feature__icon" aria-hidden="true">💬</div>
+              <div class="feature--chat-live__body">
+                <h3 id="chat-live-title">תקשורת בזמן אמת — צ'אט פרטי וקבוצתי</h3>
+                <p>
+                  שיחות אחד־על־אחד ושיחות קבוצתיות באמצעות Socket.IO. הודעות נשמרות במסד הנתונים כדי שתראה
+                  היסטוריה מלאה אחרי התחברות מחדש.
+                </p>
+                <div
+                  class="chat-flip-scene"
+                  aria-live="polite"
+                  aria-label="תצוגת שיחות לדוגמה מהפיד — מתחלפת כל עשר שניות"
+                >
+                  <div class="chat-flip-pivot" id="chatFlipPivot">
+                    <div class="chat-flip-face chat-flip-face--front" id="chatFlipFaceA"></div>
+                    <div class="chat-flip-face chat-flip-face--back" id="chatFlipFaceB"></div>
+                  </div>
+                </div>
+                <p class="chat-flip-hint">
+                  <span class="chat-flip-hint__dot" aria-hidden="true"></span>
+                  שיחות לדוגמה מתוך <a href="./feed.html">מסך הפיד</a> · מתחלפות כל 10 שנ׳ (מדמה זמן אמת)
+                </p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- פוטר: קישורים לדפי HTML סטטיים -->
+        <footer class="site-footer">
+          <p>
+            דפי <strong>HTML+CSS</strong>:
+            <a href="./landing.html">בית</a> ·
+            <a href="./login.html">התחברות</a> ·
+            <a href="./register.html">הרשמה</a> ·
+            <a href="./feed.html">פיד</a> ·
+            <a href="./profile.html">פרופיל</a> ·
+            <a href="./about.html">אודות</a>.
+          </p>
+          <p class="site-footer__copyright">
+            <span class="site-footer__copyright-mark" aria-hidden="true">©</span>
+            <span class="site-footer__copyright-text"
+              >זכויות שמורים ל־<span class="site-footer__copyright-name">Renat Rabaev</span></span
+            >
+          </p>
+        </footer>
+      </main>
+    </div>
+    <!-- כותרת סטטית: הצגת משתמש מחובר -->
+    <script src="./static-user-nav.js"></script>
+    <script>
+      /*
+       * כרטיסי תכונה (data-landing-go): מחובר — location ליעד; לא — StaticSession.setPostLoginRedirect + login.html
+       */
+      (function () {
+        var DEST = { profile: "./profile.html", feed: "./feed.html", requests: "./profile.html#requests" };
+        function go(key) {
+          var url = DEST[key];
+          if (!url) return;
+          if (window.StaticSession && window.StaticSession.isLoggedIn()) {
+            window.location.href = url;
+            return;
+          }
+          if (window.StaticSession && window.StaticSession.setPostLoginRedirect) {
+            window.StaticSession.setPostLoginRedirect(url);
+          }
+          window.location.href = "./login.html";
+        }
+        /* לחיצה או Enter/רווח על כרטיס עם data-landing-go */
+        function onCard(el) {
+          var key = el.getAttribute("data-landing-go");
+          if (!key) return;
+          go(key);
+        }
+        document.querySelectorAll("[data-landing-go]").forEach(function (el) {
+          el.addEventListener("click", function () {
+            onCard(el);
+          });
+          el.addEventListener("keydown", function (ev) {
+            if (ev.key === "Enter" || ev.key === " ") {
+              ev.preventDefault();
+              onCard(el);
+            }
+          });
+        });
+      })();
+    </script>
+    <script>
+      /* קרוסלת משתמשים: מיזוג חשבונות מ-localStorage עם דמו, חפיסת קלפים, ניווט חצים */
+      (function () {
+        var ACCOUNTS_KEY = "sn_static_accounts";
+        var SESSION_EMAIL_KEY = "sn_static_session_email";
+        var NAME_KEY = "sn_static_display_name";
+
+        var DEMO_PROFILES = [
+          { name: "דנה כהן", email: "dana@demo.social", avatar: "" },
+          { name: "יונתן לוי", email: "yoni@demo.social", avatar: "" },
+          { name: "מיכל אברהם", email: "michal@demo.social", avatar: "" },
+        ];
+
+        /* נירמול אימייל */
+        function normEmail(s) {
+          return String(s || "")
+            .trim()
+            .toLowerCase();
+        }
+
+        function loadAccounts() {
+          try {
+            var raw = localStorage.getItem(ACCOUNTS_KEY);
+            if (!raw) return [];
+            var a = JSON.parse(raw);
+            return Array.isArray(a) ? a : [];
+          } catch (e) {
+            return [];
+          }
+        }
+
+        /* משתמשים רשומים + פרופילים לדוגמה ללא כפילות; המחובר ראשון ברשימה */
+        function mergeCarouselUsers() {
+          var seen = {};
+          var out = [];
+          var real = loadAccounts();
+          for (var i = 0; i < real.length; i++) {
+            var a = real[i];
+            var k = normEmail(a.email);
+            if (!k || seen[k]) continue;
+            seen[k] = true;
+            out.push(a);
+          }
+          for (var j = 0; j < DEMO_PROFILES.length; j++) {
+            var d = DEMO_PROFILES[j];
+            var dk = normEmail(d.email);
+            if (!dk || seen[dk]) continue;
+            seen[dk] = true;
+            out.push({ name: d.name, email: d.email, avatar: d.avatar || "" });
+          }
+          var se = sessionEmail();
+          if (se) {
+            out.sort(function (x, y) {
+              var ox = normEmail(x.email) === se ? 1 : 0;
+              var oy = normEmail(y.email) === se ? 1 : 0;
+              return oy - ox;
+            });
+          }
+          return out;
+        }
+
+        /* אימייל המשתמש המחובר כרגע */
+        function sessionEmail() {
+          try {
+            return normEmail(sessionStorage.getItem(SESSION_EMAIL_KEY));
+          } catch (e) {
+            return "";
+          }
+        }
+
+        /* שם תצוגה מהסשן */
+        function sessionName() {
+          try {
+            return String(sessionStorage.getItem(NAME_KEY) || "").trim();
+          } catch (e) {
+            return "";
+          }
+        }
+
+        /* מחובר רק אם אימייל הכרטיס תואם לסשן ויש שם */
+        function isAccountOnline(acc) {
+          var se = sessionEmail();
+          var sn = sessionName();
+          if (!se || !sn) return false;
+          return normEmail(acc.email) === se;
+        }
+
+        /* ראשי תיבות לאווטאר */
+        function initials(name) {
+          var parts = String(name || "")
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean);
+          if (parts.length >= 2) {
+            return ((parts[0][0] || "") + (parts[1][0] || "")).toUpperCase();
+          }
+          if (parts[0]) return parts[0].slice(0, 2).toUpperCase();
+          return "?";
+        }
+
+        /* הפניות ל-DOM של הקרוסלה */
+        var carousel = document.getElementById("userCardsCarousel");
+        var emptyEl = document.getElementById("userCarouselEmpty");
+        var deckEl = document.getElementById("userCarouselDeck");
+        var indexEl = document.getElementById("userCarouselIndex");
+        var btnPrev = document.getElementById("userCarouselPrev");
+        var btnNext = document.getElementById("userCarouselNext");
+        if (!carousel || !emptyEl || !deckEl || !btnPrev || !btnNext) return;
+
+        var users = mergeCarouselUsers();
+        var idx = 0;
+
+        /* בונה כרטיס משתמש בודד (אווטאר, סטטוס, שם, מייל) */
+        function createUserCardElement(acc) {
+          var online = isAccountOnline(acc);
+          var card = document.createElement("div");
+          card.className = "landing-user-card landing-user-card--deck";
+
+          var avWrap = document.createElement("div");
+          avWrap.className = "landing-user-card__avatar";
+          if (acc.avatar && String(acc.avatar).indexOf("data:") === 0) {
+            var img = document.createElement("img");
+            img.className = "landing-user-card__avatar-img";
+            img.src = acc.avatar;
+            img.alt = "";
+            avWrap.appendChild(img);
+          } else {
+            var letters = document.createElement("span");
+            letters.className = "landing-user-card__avatar-letters";
+            letters.setAttribute("aria-hidden", "true");
+            letters.textContent = initials(acc.name);
+            avWrap.appendChild(letters);
+          }
+          card.appendChild(avWrap);
+
+          var row = document.createElement("div");
+          row.className = "landing-user-card__row";
+          var dot = document.createElement("span");
+          dot.className =
+            "landing-user-card__dot " +
+            (online ? "landing-user-card__dot--online" : "landing-user-card__dot--offline");
+          dot.setAttribute("aria-hidden", "true");
+          var statusText = online ? "מחובר/ת" : "לא מחובר/ת";
+          dot.title = statusText;
+          var st = document.createElement("span");
+          st.className = "landing-user-card__status";
+          st.textContent = statusText;
+          row.appendChild(dot);
+          row.appendChild(st);
+          card.appendChild(row);
+
+          var nm = document.createElement("div");
+          nm.className = "landing-user-card__name";
+          nm.textContent = acc.name || "משתמש";
+          card.appendChild(nm);
+
+          var em = document.createElement("div");
+          em.className = "landing-user-card__email";
+          em.textContent = acc.email || "";
+          card.appendChild(em);
+
+          return card;
+        }
+
+        /* מצייר חפיסה: עד 2 קלפים מאחור + פעיל במרכז */
+        function renderDeck() {
+          var n = users.length;
+          deckEl.textContent = "";
+          if (!n) return;
+
+          function addLayer(offset, layerClass) {
+            var i = (idx + offset) % n;
+            var acc = users[i];
+            var el = createUserCardElement(acc);
+            el.classList.add("landing-user-card--" + layerClass);
+            if (layerClass === "active") {
+              el.setAttribute("role", "group");
+              el.setAttribute(
+                "aria-label",
+                (acc.name || "משתמש") + ", " + (isAccountOnline(acc) ? "מחובר" : "לא מחובר")
+              );
+            } else {
+              el.setAttribute("aria-hidden", "true");
+            }
+            deckEl.appendChild(el);
+          }
+
+          if (n >= 3) {
+            addLayer(2, "behind-2");
+            addLayer(1, "behind-1");
+          } else if (n === 2) {
+            addLayer(1, "behind-1");
+          }
+          addLayer(0, "active");
+
+          if (indexEl) {
+            indexEl.textContent = n > 1 ? idx + 1 + " מתוך " + n : "";
+          }
+        }
+
+        /* משבית חצים כשיש משתמש יחיד */
+        function updateNav() {
+          var n = users.length;
+          btnPrev.disabled = n <= 1;
+          btnNext.disabled = n <= 1;
+        }
+
+        /* מציג קרוסלה או מסך ריק */
+        function show() {
+          if (!users.length) {
+            emptyEl.hidden = false;
+            carousel.hidden = true;
+            return;
+          }
+          emptyEl.hidden = true;
+          carousel.hidden = false;
+          if (idx >= users.length) idx = 0;
+          renderDeck();
+          updateNav();
+        }
+
+        /* חץ שמאל — המשתמש הקודם ברשימה */
+        btnPrev.addEventListener("click", function () {
+          if (users.length <= 1) return;
+          idx = (idx - 1 + users.length) % users.length;
+          renderDeck();
+          updateNav();
+        });
+
+        /* חץ ימין — המשתמש הבא */
+        btnNext.addEventListener("click", function () {
+          if (users.length <= 1) return;
+          idx = (idx + 1) % users.length;
+          renderDeck();
+          updateNav();
+        });
+
+        /* מקשי חצים כשהפוקוס בתוך הקרוסלה */
+        document.addEventListener("keydown", function (e) {
+          if (carousel.hidden) return;
+          var tag = (e.target && e.target.tagName) || "";
+          if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+          if (!carousel.contains(document.activeElement)) return;
+          if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            btnPrev.click();
+          }
+          if (e.key === "ArrowRight") {
+            e.preventDefault();
+            btnNext.click();
+          }
+        });
+
+        /* חזרה לדף (כולל אחורה מהדפדפן) — רענון רשימת משתמשים */
+        window.addEventListener("pageshow", function () {
+          users = mergeCarouselUsers();
+          if (idx >= users.length) idx = 0;
+          show();
+        });
+
+        show();
+      })();
+
+      /* קלף מתהפך: שיחות דמו בסגנון הפיד; החלפה כל ~10 שנ׳, מכבד prefers-reduced-motion */
+      (function () {
+        var FEED_CONVERSATIONS = [
+          {
+            title: "דנה כהן · כמו בפוסט בפיד",
+            subtitle: "מסכי הפרויקט והממשק",
+            messages: [
+              {
+                who: "them",
+                name: "דנה",
+                text: "סיימתי את מסכי הפרויקט! ממשק מודרני עם HTML ו־CSS, וחיבור מלא ל־Node בגרסה האמיתית.",
+              },
+              { who: "me", name: "אתה", text: "מעולה! מתי מחברים את ה־API לצ'אט?" },
+            ],
+          },
+          {
+            title: "יונתן לוי · כמו בפוסט בפיד",
+            subtitle: "קבוצת לימוד ו־Socket.IO",
+            messages: [
+              {
+                who: "them",
+                name: "יונתן",
+                text: "מזמינים אתכם לקבוצת הלימוד של צ'אט בזמן אמת — Socket.IO עובד מעולה עם החדרים.",
+              },
+              { who: "me", name: "דנה", text: "נכנסתי לקבוצה — שולחים לינק לחדר?" },
+            ],
+          },
+          {
+            title: "אתה · כמו בפוסט בפיד",
+            subtitle: "ברוכים הבאים לפיד",
+            messages: [
+              {
+                who: "me",
+                name: "אתה",
+                text: "ברוכים הבאים לפיד! גלול למעלה כדי לראות את אזור הפרסום.",
+              },
+              {
+                who: "them",
+                name: "יונתן",
+                text: "מצטרף לשיחה — בואו נמשיך את הדיון על Socket.IO בקבוצה.",
+              },
+            ],
+          },
+        ];
+
+        var pivot = document.getElementById("chatFlipPivot");
+        var faceA = document.getElementById("chatFlipFaceA");
+        var faceB = document.getElementById("chatFlipFaceB");
+        if (!pivot || !faceA || !faceB) return;
+
+        var faces = [faceA, faceB];
+        var visibleIdx = 0;
+        var convIdx = 0;
+        var intervalMs = 10000;
+
+        function esc(s) {
+          var d = document.createElement("div");
+          d.textContent = s;
+          return d.innerHTML;
+        }
+
+        function renderFace(el, conv) {
+          var html = "";
+          html += '<div class="chat-flip__head">';
+          html += '<span class="chat-flip__badge">מן הפיד</span>';
+          html += '<h4 class="chat-flip__title">' + esc(conv.title) + "</h4>";
+          if (conv.subtitle) {
+            html += '<p class="chat-flip__sub">' + esc(conv.subtitle) + "</p>";
+          }
+          html += "</div>";
+          html += '<div class="chat-flip__thread">';
+          conv.messages.forEach(function (m) {
+            var cls =
+              m.who === "me" ? "chat-flip__bubble chat-flip__bubble--me" : "chat-flip__bubble chat-flip__bubble--them";
+            html += '<div class="' + cls + '">';
+            html += '<span class="chat-flip__sender">' + esc(m.name) + "</span>";
+            html += '<span class="chat-flip__text">' + esc(m.text) + "</span>";
+            html += "</div>";
+          });
+          html += "</div>";
+          el.innerHTML = html;
+        }
+
+        function prefersReducedMotion() {
+          try {
+            return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          } catch (e) {
+            return false;
+          }
+        }
+
+        var n = FEED_CONVERSATIONS.length;
+        renderFace(faceA, FEED_CONVERSATIONS[0]);
+        renderFace(faceB, FEED_CONVERSATIONS[1 % n]);
+
+        function tick() {
+          var nextConv = (convIdx + 1) % n;
+          var hiddenFaceIdx = 1 - visibleIdx;
+          renderFace(faces[hiddenFaceIdx], FEED_CONVERSATIONS[nextConv]);
+          pivot.classList.toggle("is-flipped");
+          visibleIdx = hiddenFaceIdx;
+          convIdx = nextConv;
+        }
+
+        if (prefersReducedMotion()) {
+          pivot.style.transition = "none";
+        }
+
+        setInterval(tick, intervalMs);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,163 @@
+/*
+ * global.css — סגנון בסיס לאפליקציית React (Vite).
+ * מקטעים: משתנים → איפוס → גוף ורקע → #root → נגישות → אנימציית כניסה → טקסטורה.
+ */
+
+/* —— משתנים: צבעים, משטחים, גרדיאנט mesh, צללים, רדיוס, טיפוגרפיה —— */
+:root {
+  color-scheme: light;
+
+  /* מותג ומשטחים */
+  --color-primary: #5b5bd6;
+  --color-primary-hover: #4848c4;
+  --color-accent: #0d9488;
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  --color-border: rgba(15, 23, 42, 0.08);
+
+  --surface-page: #f4f6fb;
+  --surface-elevated: rgba(255, 255, 255, 0.78);
+  --surface-solid: #ffffff;
+
+  /* עצירות לגרדיאנט הרקע */
+  --mesh-1: #e8e9ff;
+  --mesh-2: #e0f7f4;
+  --mesh-3: #fdf4ff;
+  --mesh-4: #dbeafe;
+
+  /* עומק / צללים */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.12);
+  --shadow-glow: 0 0 0 1px rgba(91, 91, 214, 0.12), 0 12px 40px rgba(91, 91, 214, 0.15);
+
+  /* פינות מעוגלות ואנימציה */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration: 220ms;
+
+  --font-sans: "Heebo", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --leading: 1.6;
+}
+
+/* —— box-sizing אחיד —— */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* —— גלילה; כיבוי אנימציה אם המשתמש ביקש הפחתת תנועה —— */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* —— גוף: פונט, רקע גרדיאנט קבוע —— */
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading);
+  color: var(--color-text);
+  background-color: var(--surface-page);
+  background-image:
+    radial-gradient(1200px 800px at 100% 0%, var(--mesh-1), transparent 55%),
+    radial-gradient(900px 700px at 0% 100%, var(--mesh-2), transparent 50%),
+    radial-gradient(700px 500px at 50% 50%, var(--mesh-3), transparent 45%),
+    radial-gradient(800px 600px at 80% 90%, var(--mesh-4), transparent 40%);
+  background-attachment: fixed;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* —— שורש React — מינימום גובה מסך —— */
+#root {
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+/* —— סימון טקסט —— */
+::selection {
+  background: rgba(91, 91, 214, 0.22);
+  color: var(--color-text);
+}
+
+/* —— מיקוד מקלדת —— */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* —— כניסה עדינה לתוכן מתחת ל-root —— */
+@keyframes app-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#root > * {
+  animation: app-fade-in 0.45s var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root > * {
+    animation: none;
+  }
+}
+
+/* —— מחלקת עזר: טקסט מוסתר ממסך, זמין לקוראי מסך —— */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* —— שכבת רעש דקורטיבית מאחורי האפליקציה —— */
+body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* —— התוכן מעל שכבת הרעש —— */
+#root {
+  position: relative;
+  z-index: 1;
+}

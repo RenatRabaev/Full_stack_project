@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>תיעוד פונקציות — דפי HTML סטטיים וסקריפטים משותפים</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", "Heebo", Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.5;
+      color: #1a1a1a;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 28px 28px 56px;
+    }
+    h1 {
+      font-size: 1.35rem;
+      border-bottom: 2px solid #3f51b5;
+      padding-bottom: 8px;
+      margin-top: 0;
+    }
+    h2 {
+      font-size: 1.05rem;
+      color: #303f9f;
+      margin-top: 1.5rem;
+      margin-bottom: 0.45rem;
+    }
+    h3 {
+      font-size: 0.98rem;
+      margin: 1rem 0 0.35rem;
+      color: #444;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.8pt;
+      margin: 0.4rem 0 0.9rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px 8px;
+      text-align: right;
+      vertical-align: top;
+    }
+    th { background: #e8eaf6; font-weight: 600; width: 28%; }
+    .path {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+      background: #f5f5f5;
+      padding: 1px 4px;
+      border-radius: 2px;
+    }
+    .muted { color: #555; font-size: 0.92em; }
+    p { margin: 0.35rem 0; }
+  </style>
+</head>
+<body>
+
+  <h1>תיעוד פונקציות — דפי HTML וסקריפטים סטטיים</h1>
+  <p class="muted">רשימת פונקציות בעלות שם (ולא כוללת כל לולאת forEach אנונימית). נתיב בסיסי: <span class="path">frontend/public/</span>.</p>
+  <p class="muted"><a href="./html-static-user-guide.html">חזרה למדריך משתמש</a></p>
+
+  <h2><span class="path">static-user-nav.js</span></h2>
+  <table>
+    <thead><tr><th>שם</th><th>תפקיד</th></tr></thead>
+    <tbody>
+      <tr><td><code>normEmail</code></td><td>נירמול מחרוזת אימייל להשוואה.</td></tr>
+      <tr><td><code>migrateAccountsToLocalOnce</code></td><td>מיזוג חשבונות ישנים מ-session ל-localStorage (חד־פעמי).</td></tr>
+      <tr><td><code>getDisplayName</code></td><td>קורא שם תצוגה מהסשן; ריק אם אין משתמש מחובר.</td></tr>
+      <tr><td><code>initialsFromName</code></td><td>ראשי תיבות לתצוגה באווטאר הכותרת.</td></tr>
+      <tr><td><code>applyStaticHeader</code></td><td>מחליף בין מצב אורח למצב משתמש ב־<code>#staticHeaderGuest</code> / <code>#staticHeaderUser</code>.</td></tr>
+      <tr><td><code>bindLogout</code></td><td>מאזין ללחיצת התנתקות ומנקה מפתחות session (כולל יעד login שמור).</td></tr>
+      <tr><td><code>isLoggedIn</code></td><td>מחזיר true אם יש שם תצוגה בסשן.</td></tr>
+      <tr><td><code>setPostLoginRedirect</code></td><td>שומר URL לניווט אחרי התחברות מוצלחת.</td></tr>
+      <tr><td><code>consumePostLoginRedirect</code></td><td>קורא ומוחק את יעד ה-post-login; מחרוזת ריקה אם אין.</td></tr>
+      <tr><td><code>run</code></td><td>מיגרציה, התנתקות, עדכון כותרת.</td></tr>
+    </tbody>
+  </table>
+  <p class="muted"><strong>גלובלי:</strong> <code>window.StaticSession</code> — <code>isLoggedIn</code>, <code>setPostLoginRedirect</code>, <code>consumePostLoginRedirect</code>.</p>
+
+  <h2><span class="path">static-friends.js</span></h2>
+  <table>
+    <thead><tr><th>שם</th><th>תפקיד</th></tr></thead>
+    <tbody>
+      <tr><td><code>guessEmail</code></td><td>מנחש אימייל לפי שם מחבר כשאין מיפוי קבוע.</td></tr>
+      <tr><td><code>getDisplayName</code></td><td>שם המשתמש המחובר מהסשן.</td></tr>
+      <tr><td><code>loadIncoming</code> / <code>saveIncoming</code></td><td>טעינה ושמירה של בקשות חברות נכנסות.</td></tr>
+      <tr><td><code>loadOutgoing</code> / <code>saveOutgoing</code></td><td>בקשות יוצאות ממתינות.</td></tr>
+      <tr><td><code>loadFriends</code> / <code>saveFriends</code></td><td>רשימת חברים מאושרים.</td></tr>
+      <tr><td><code>normName</code></td><td>נירמול שם להשוואה.</td></tr>
+      <tr><td><code>isFriend</code></td><td>האם השם ברשימת החברים.</td></tr>
+      <tr><td><code>hasOutgoingTo</code></td><td>האם כבר נשלחה בקשה יוצאת.</td></tr>
+      <tr><td><code>hasIncomingFrom</code></td><td>האם יש בקשה נכנסת מהמשתמש.</td></tr>
+      <tr><td><code>sendFriendRequestTo</code></td><td>שולח בקשת חברות; מחזיר קוד תוצאה (ok, self, friend וכו').</td></tr>
+      <tr><td><code>addFriendAndSyncChat</code></td><td>מוסיף חבר לאחר אישור ומסנכרן לצ'אט.</td></tr>
+      <tr><td><code>syncAllFriendsToChat</code></td><td>יוצר/מעדכן שרשורי צ'אט לפי רשימת החברים.</td></tr>
+      <tr><td><code>updateFriendButton</code></td><td>מעדכן מצב UI של כפתור חברות לפי מצב האחסון.</td></tr>
+      <tr><td><code>refreshAllFeedFriendButtons</code></td><td>מרענן את כל כפתורי החברות בפיד.</td></tr>
+      <tr><td><code>bindFeedFriendButtons</code></td><td>אירוע ללחיצה על כפתור חבר ב־<code>#staticPostList</code>.</td></tr>
+      <tr><td><code>incomingCount</code></td><td>מספר בקשות נכנסות (על האובייקט הגלובלי).</td></tr>
+    </tbody>
+  </table>
+  <p class="muted"><strong>גלובלי:</strong> <code>window.StaticFriends</code> — כולל המתודות לעיל והמפתחות הקבועים ל־storage.</p>
+
+  <h2><span class="path">static-about-modal.js</span></h2>
+  <table>
+    <thead><tr><th>שם</th><th>תפקיד</th></tr></thead>
+    <tbody>
+      <tr><td><code>tryUpgradeSpaPreview</code></td><td>בודק אם נתיב React זמין; מעדכן קישור תצוגה מקדימה או fallback.</td></tr>
+      <tr><td><code>applyFallback</code> (פנימית)</td><td>מכוון קישור לדף בית כשה־SPA לא זמין.</td></tr>
+      <tr><td><code>openModal</code></td><td>פותח מודל קוד מקור HTML.</td></tr>
+      <tr><td><code>closeModal</code></td><td>סוגר מודל ומנקה תוכן.</td></tr>
+      <tr><td><code>showError</code></td><td>מציג שגיאת טעינה במודל.</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="path">landing.html</span> — סקריפטים פנימיים</h2>
+  <h3>בלוק ניווט כרטיסי תכונות</h3>
+  <table>
+    <tbody>
+      <tr><td><code>go</code></td><td>מנווט לפרופיל / פיד / בקשות (או שומר יעד ומעביר ל-login אם אין סשן).</td></tr>
+      <tr><td><code>onCard</code></td><td>מפעיל ניווט לפי <code>data-landing-go</code> על הכרטיס.</td></tr>
+    </tbody>
+  </table>
+  <h3>בלוק קרוסלת משתמשים</h3>
+  <table>
+    <tbody>
+      <tr><td><code>normEmail</code></td><td>נירמול אימייל.</td></tr>
+      <tr><td><code>loadAccounts</code></td><td>טוען חשבונות מ־localStorage.</td></tr>
+      <tr><td><code>mergeCarouselUsers</code></td><td>מאחד רשומים ופרופילי דמו לרשימת קרוסלה.</td></tr>
+      <tr><td><code>sessionEmail</code> / <code>sessionName</code></td><td>מייל ושם מהסשן.</td></tr>
+      <tr><td><code>isAccountOnline</code></td><td>האם החשבון תואם למשתמש המחובר כרגע.</td></tr>
+      <tr><td><code>initials</code></td><td>ראשי תיבות לכרטיס קרוסלה.</td></tr>
+      <tr><td><code>createUserCardElement</code></td><td>בונה אלמנט כרטיס משתמש.</td></tr>
+      <tr><td><code>renderDeck</code></td><td>מרנדר את חפיסת הקלפים (כולל <code>addLayer</code> פנימית לשכבות).</td></tr>
+      <tr><td><code>updateNav</code></td><td>מצב כפתורי prev/next בקרוסלה.</td></tr>
+      <tr><td><code>show</code></td><td>מאתחל תצוגת קרוסלה מול מצב ריק.</td></tr>
+    </tbody>
+  </table>
+  <h3>בלוק היפוך תצוגת צ'אט (דמו)</h3>
+  <table>
+    <tbody>
+      <tr><td><code>esc</code></td><td>בריחת תווים ל־HTML בטוח.</td></tr>
+      <tr><td><code>renderFace</code></td><td>ממלא פנייה של תצוגת שיחה בדוגמה.</td></tr>
+      <tr><td><code>prefersReducedMotion</code></td><td>כיבוי אנימציה לפי העדפת מערכת.</td></tr>
+      <tr><td><code>tick</code></td><td>מחליף בין שני פני צ'אט בתזמון.</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="path">login.html</span></h2>
+  <table>
+    <tbody>
+      <tr><td><code>clearLegacyLocalStorage</code></td><td>מנקה מפתחות ישנים שלא אמורים להיות ב־localStorage.</td></tr>
+      <tr><td><code>getAccounts</code></td><td>טוען מערך חשבונות.</td></tr>
+      <tr><td><code>normEmail</code></td><td>נירמול אימייל.</td></tr>
+      <tr><td><code>hideError</code> / <code>showError</code></td><td>הצגת/הסתרת שגיאת טופס.</td></tr>
+      <tr><td><code>openForgotModal</code> / <code>closeForgotModal</code></td><td>מודל שכחתי סיסמה.</td></tr>
+      <tr><td><code>checkForgotHash</code></td><td>פותח מודל אם ה־hash הוא <code>#forgot</code>.</td></tr>
+    </tbody>
+  </table>
+  <p class="muted">ב־submit: אחרי הצלחה נקרא <code>StaticSession.consumePostLoginRedirect()</code> לניווט.</p>
+
+  <h2><span class="path">register.html</span></h2>
+  <table>
+    <tbody>
+      <tr><td><code>clearLegacyLocalStorage</code></td><td>כמו בדף ההתחברות.</td></tr>
+      <tr><td><code>getAccounts</code> / <code>saveAccounts</code></td><td>קריאה ושמירה של רשימת חשבונות.</td></tr>
+      <tr><td><code>normEmail</code></td><td>נירמול אימייל.</td></tr>
+      <tr><td><code>hideError</code> / <code>showError</code></td><td>שגיאות טופס.</td></tr>
+      <tr><td><code>showEmailAlreadyRegistered</code></td><td>מציג מצב מייל קיים + קישורים.</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="path">feed.html</span></h2>
+  <table>
+    <tbody>
+      <tr><td><code>clearLegacyLocalStorage</code></td><td>ניקוי מפתחות legacy מ־localStorage.</td></tr>
+      <tr><td><code>loadInteractions</code> / <code>saveInteractions</code></td><td>לייקים ותגובות לפי מזהה פוסט.</td></tr>
+      <tr><td><code>loadCommentHistory</code> / <code>saveCommentHistory</code></td><td>היסטוריית תגובות המשתמש המחובר.</td></tr>
+      <tr><td><code>rememberMyComment</code></td><td>מוסיף תגובה להיסטוריה אחרי שליחה.</td></tr>
+      <tr><td><code>parseLikeButton</code></td><td>מפרק מצב מכפתור לייק.</td></tr>
+      <tr><td><code>renderLikeButton</code></td><td>מעדכן טקסט ומחלקות לייק.</td></tr>
+      <tr><td><code>packPostState</code></td><td>אוסף מצב פוסט לאחסון (לייקים + תגובות).</td></tr>
+      <tr><td><code>applyPackedState</code></td><td>משחזר מצב פוסט מהאחסון.</td></tr>
+      <tr><td><code>appendCommentRow</code></td><td>מוסיף שורת תגובה לרשימה.</td></tr>
+      <tr><td><code>ensureCommentUi</code></td><td>מוודא שיש מבנה UI לתגובות על כרטיס פוסט.</td></tr>
+      <tr><td><code>persistPostState</code></td><td>שומר מצב פוסט ב־sessionStorage.</td></tr>
+      <tr><td><code>toggleLikeOnPost</code></td><td>החלפת לייק + שמירה.</td></tr>
+      <tr><td><code>toggleCommentPanel</code></td><td>פתיחה/סגירה של פאנל תגובות.</td></tr>
+      <tr><td><code>loadSavedPosts</code></td><td>טוען פוסטים שנשמרו בסשן לרשימה.</td></tr>
+      <tr><td><code>savePostsToStorage</code></td><td>שומר את כל הפוסטים הדינמיים.</td></tr>
+      <tr><td><code>buildPostArticle</code></td><td>בונה אלמנט <code>article.post</code> מנתונים.</td></tr>
+      <tr><td><code>addUserPost</code></td><td>מפרסם פוסט חדש מהמחבר.</td></tr>
+      <tr><td><code>clearComposerImagePreview</code> / <code>showComposerImagePreview</code></td><td>תצוגה מקדימה לתמונה במחבר.</td></tr>
+      <tr><td><code>openPostImageLightbox</code> / <code>closePostImageLightbox</code></td><td>לייטבוקס תמונת פוסט.</td></tr>
+      <tr><td><code>initDemoInteractions</code></td><td>משחזר לייקים/תגובות לפוסטי דמו קבועים.</td></tr>
+      <tr><td><code>clearHashFocusClass</code></td><td>מסיר הדגשה ויזואלית מכל פוסטים.</td></tr>
+      <tr><td><code>focusPostFromHash</code></td><td>מטפל ב־<code>#post-…</code>: גלילה, פתיחת תגובות, מחלקת הדגשה זמנית.</td></tr>
+    </tbody>
+  </table>
+  <p class="muted">פונקציה פנימית <code>finish</code> בתוך טיפול בתמונה — מסיימת קריאת קובץ ל־Data URL.</p>
+
+  <h2><span class="path">profile.html</span></h2>
+  <table>
+    <tbody>
+      <tr><td><code>normEmail</code></td><td>נירמול אימייל.</td></tr>
+      <tr><td><code>getAccounts</code> / <code>saveAccounts</code></td><td>ניהול מערך חשבונות ב־localStorage.</td></tr>
+      <tr><td><code>normalizeAccount</code></td><td>שדות ברירת מחדל לרשומת חשבון.</td></tr>
+      <tr><td><code>resolveSessionEmail</code></td><td>מזהה אימייל של המשתמש המחובר.</td></tr>
+      <tr><td><code>getCurrentAccount</code></td><td>מחזיר את רשומת החשבון הנוכחי.</td></tr>
+      <tr><td><code>migrateAccounts</code></td><td>תאימות נתונים ישנים.</td></tr>
+      <tr><td><code>redirectLogin</code></td><td>הפניה לדף התחברות כשאין סשן.</td></tr>
+      <tr><td><code>initials</code></td><td>ראשי תיבות לתצוגה.</td></tr>
+      <tr><td><code>saveCurrentAccount</code></td><td>עדכון חשבון נוכחי ב־localStorage.</td></tr>
+      <tr><td><code>getPosts</code> / <code>savePosts</code></td><td>פוסטים גלובליים בסשן.</td></tr>
+      <tr><td><code>myPosts</code></td><td>סינון פוסטים של המשתמש הנוכחי.</td></tr>
+      <tr><td><code>getUploadedGallery</code> / <code>saveUploadedGallery</code></td><td>פריטי גלריה שהועלו.</td></tr>
+      <tr><td><code>getCommentHistory</code></td><td>תגובות המשתמש מהפיד.</td></tr>
+      <tr><td><code>renderAvatar</code></td><td>תצוגת תמונת פרופיל.</td></tr>
+      <tr><td><code>renderHeaderFields</code></td><td>שדות כותרת הפרופיל.</td></tr>
+      <tr><td><code>closeAllInlineEditors</code></td><td>סוגר עורכים בשורה.</td></tr>
+      <tr><td><code>openInlineEditor</code></td><td>פותח עריכה לשדה (ביוגרפיה וכו').</td></tr>
+      <tr><td><code>renderActivity</code></td><td>מקטע פעילות (פוסטים, תגובות, קישורים לפיד).</td></tr>
+      <tr><td><code>escapeHtml</code></td><td>בריחה לטקסט בטוח ב־HTML.</td></tr>
+      <tr><td><code>setGalleryEditUi</code> / <code>exitGalleryEditMode</code></td><td>מצב בחירה במחיקה מגלריה.</td></tr>
+      <tr><td><code>renderGalleryTab</code></td><td>מילוי טאב גלריה.</td></tr>
+      <tr><td><code>fillEditForm</code></td><td>מילוי טופס עריכת פרופיל.</td></tr>
+      <tr><td><code>loadRequests</code> / <code>saveRequests</code></td><td>בקשות נכנסות (מפתח ייעודי בפרופיל).</td></tr>
+      <tr><td><code>updateRequestsTabBadge</code></td><td>תגית על טאב בקשות.</td></tr>
+      <tr><td><code>renderRequests</code></td><td>רשימות נכנסות/יוצאות + כפתורי פעולה.</td></tr>
+      <tr><td><code>ensureChatThreads</code></td><td>מוודא מבנה שרשורי צ'אט.</td></tr>
+      <tr><td><code>saveChatThreads</code></td><td>שמירת שרשורים.</td></tr>
+      <tr><td><code>renderChatThreads</code></td><td>רשימת שיחות בצד.</td></tr>
+      <tr><td><code>renderChatMessages</code></td><td>הודעות לשרשור הנבחר.</td></tr>
+      <tr><td><code>pushMessage</code></td><td>הוספת הודעה לדמו צ'אט.</td></tr>
+      <tr><td><code>selectTab</code></td><td>החלפת טאב לפי אינדקס.</td></tr>
+      <tr><td><code>applyHashToTab</code></td><td>בוחר טאב בקשות לפי <code>#requests</code> וכו'.</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="path">about.html</span></h2>
+  <p class="muted">אין סקריפט inline; הלוגיקה ב־<span class="path">static-about-modal.js</span> וב־<span class="path">static-user-nav.js</span> (כותרת בלבד).</p>
+
+  <h2><span class="path">landing.css</span></h2>
+  <p class="muted">קובץ עיצוב ללא פונקציות JavaScript. סעיפים מתועדים בראש הקובץ; כולל סגנונות ל־<code>.feature--clickable</code>, <code>.post--hash-focus</code>, פיד, פרופיל וכו'.</p>
+
+</body>
+</html>

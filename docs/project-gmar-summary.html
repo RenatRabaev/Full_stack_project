@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>סיכום דרישות פרויקט גמר — רשת חברתית</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", "Heebo", Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 28px 32px 48px;
+    }
+    h1 {
+      font-size: 1.45rem;
+      border-bottom: 2px solid #3f51b5;
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+    h2 {
+      font-size: 1.15rem;
+      color: #303f9f;
+      margin-top: 1.75rem;
+      margin-bottom: 0.6rem;
+    }
+    h3 {
+      font-size: 1rem;
+      margin-top: 1.1rem;
+      margin-bottom: 0.4rem;
+    }
+    p { margin: 0.45rem 0; }
+    ul { margin: 0.35rem 0 0.6rem; padding-right: 1.35rem; }
+    li { margin: 0.25rem 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10pt;
+      margin: 0.6rem 0 1rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px 10px;
+      text-align: right;
+      vertical-align: top;
+    }
+    th { background: #e8eaf6; font-weight: 600; }
+    code, .path {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.92em;
+      background: #f5f5f5;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+    .note {
+      background: #fff8e1;
+      border-right: 4px solid #ffc107;
+      padding: 10px 14px;
+      margin: 1rem 0;
+    }
+    .muted { color: #555; font-size: 0.95em; }
+    @media print {
+      body { padding: 16px; }
+      h2 { page-break-after: avoid; }
+      table { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>סיכום דרישות פרויקט גמר — אפליקציית רשת חברתית<br />
+    <span class="muted" style="font-weight: normal; font-size: 0.85em">(React + Node + Socket.IO + MongoDB — מיפוי למימוש בפרויקט)</span>
+  </h1>
+  <p class="muted">מסמך זה מסכם את מסמך הדרישות מול מה שמומש בקוד. נוצר אוטומטית לצורך הגשה / תיעוד.</p>
+
+  <h2>חלק א׳ — סיכום לפי סעיף (מה נדרש ומה המצב)</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>סעיף במסמך</th>
+        <th>מה נדרש</th>
+        <th>מה המצב בפרויקט</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>מטרת הפרויקט</strong></td>
+        <td>רשת חברתית קטנה: משתמשים, פרופילים, פוסטים, בקשות חברות, צ׳אט בזמן אמת (פרטי/קבוצתי), חיבור לקוח–שרת ואחסון נתונים</td>
+        <td><strong>ממומש</strong> — אפליקציית React + API + Socket.IO + MongoDB</td>
+      </tr>
+      <tr>
+        <td><strong>הרשמה / התחברות + JWT</strong></td>
+        <td>API אימות, שמירת טוקן בצד הלקוח</td>
+        <td><strong>ממומש</strong> — דפי Register/Login, <code>POST /api/auth</code> + JWT; הטוקן ב־<strong>sessionStorage</strong> (<code>sn_token</code>)</td>
+      </tr>
+      <tr>
+        <td><strong>עמוד פרופיל</strong></td>
+        <td>פרטים אישיים + תמונת פרופיל</td>
+        <td><strong>ממומש</strong> — <code>/profile</code> ו־<code>/users/:id</code></td>
+      </tr>
+      <tr>
+        <td><strong>עריכת פרופיל</strong></td>
+        <td>פרטים, תמונה, ביוגרפיה</td>
+        <td><strong>ממומש</strong> — עדכון שם/ביוגרפיה/טלפון/מיקום + העלאת אווטאר</td>
+      </tr>
+      <tr>
+        <td><strong>פיד</strong></td>
+        <td>פוסטים של משתמשים וחברים, לייקים ותגובות, העלאת פוסט (טקסט + תמונות)</td>
+        <td><strong>ממומש</strong> — אינטגרציה ל־<code>/api/posts</code></td>
+      </tr>
+      <tr>
+        <td><strong>בקשות חברות</strong></td>
+        <td>רשימת משתמשים, שליחה/אישור/דחייה, רשימת חברים</td>
+        <td><strong>ממומש</strong> — דף Friends + נתיבי <code>/api/friends</code></td>
+      </tr>
+      <tr>
+        <td><strong>צ׳אט פנימי (Socket.IO)</strong></td>
+        <td>רשימת שיחות (1:1 או קבוצתי), שליחה/קבלה בזמן אמת, שמירת היסטוריה</td>
+        <td><strong>ממומש</strong> — Chat.jsx + Socket.IO בשרת + Message + Conversation ב־DB</td>
+      </tr>
+      <tr>
+        <td><strong>עיצוב ו־UX</strong></td>
+        <td>רספונסיבי (Tailwind / MUI), Router, Context / Redux</td>
+        <td><strong>ממומש</strong> — Material UI (MUI), React Router, Redux Toolkit</td>
+      </tr>
+      <tr>
+        <td><strong>שרת — Authentication</strong></td>
+        <td>bcrypt, JWT</td>
+        <td><strong>ממומש</strong> — bcrypt + JWT</td>
+      </tr>
+      <tr>
+        <td><strong>Users API</strong></td>
+        <td>CRUD, חיפוש, פרופיל</td>
+        <td><strong>ממומש ברובו</strong> — me, עדכון, אווטאר, חיפוש, צפייה לפי id, מחיקת חשבון</td>
+      </tr>
+      <tr>
+        <td><strong>Friendship API</strong></td>
+        <td>שליחה/אישור/דחייה, רשימת חברים</td>
+        <td><strong>ממומש</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Posts API</strong></td>
+        <td>פוסט + מדיה, לייקים, תגובות, פיד</td>
+        <td><strong>ממומש</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Chat (Socket.IO)</strong></td>
+        <td>חיבור בזמן אמת, rooms, הודעות, שמירה ב־DB</td>
+        <td><strong>ממומש</strong></td>
+      </tr>
+      <tr>
+        <td><strong>File uploads</strong></td>
+        <td>multer / ענן, קישורי מדיה ב־DB</td>
+        <td><strong>ממומש</strong> — multer ל־<code>backend/uploads</code></td>
+      </tr>
+      <tr>
+        <td><strong>מודל נתונים</strong></td>
+        <td>User, Post, Message, Conversation, FriendRequest</td>
+        <td><strong>ממומש</strong> — תחת <span class="path">backend/models/</span></td>
+      </tr>
+      <tr>
+        <td><strong>מסד נתונים</strong></td>
+        <td>MongoDB או SQL</td>
+        <td><strong>ממומש</strong> — MongoDB + Mongoose; אינדקסים בחלק מהמודלים</td>
+      </tr>
+      <tr>
+        <td><strong>אופציונלי</strong></td>
+        <td>התראות, Stories, Dark mode, עדכון פיד בזמן אמת, Deployment</td>
+        <td><strong>לא ממומש</strong> (לפי README)</td>
+      </tr>
+      <tr>
+        <td><strong>תוצרים</strong></td>
+        <td>Repository, README, מערכת רצה, סרטון 5–10 דקות</td>
+        <td>ריפו + README + קוד רץ; <strong>סרטון</strong> — תוצר חיצוני</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>בנוסף:</strong> דפי HTML+CSS סטטיים ב־<span class="path">frontend/public/</span> (דף נחיתה, התחברות, הרשמה, פיד, פרופיל) — הדגמה/ללא שרת, מעבר לדרישת React במסמך הקורס.</p>
+
+  <h2>חלק ב׳ — מה נעשה, איפה, ואיזה קובץ (מיפוי טכני)</h2>
+
+  <h3>ארכיטקטורה כללית</h3>
+  <ul>
+    <li><strong>שרת:</strong> <span class="path">backend/src/index.js</span> — Express, <code>/api</code>, <code>/uploads</code>, Socket.IO, MongoDB</li>
+    <li><strong>לקוח:</strong> <span class="path">frontend/src/main.jsx</span>, <span class="path">frontend/src/App.jsx</span></li>
+  </ul>
+
+  <h3>אימות (הרשמה / התחברות) + JWT</h3>
+  <ul>
+    <li><strong>דפים:</strong> <span class="path">frontend/src/pages/Login.jsx</span>, <span class="path">Register.jsx</span></li>
+    <li><strong>סטייט:</strong> <span class="path">frontend/src/store/authSlice.js</span></li>
+    <li><strong>HTTP:</strong> <span class="path">frontend/src/api/client.js</span></li>
+    <li><strong>שרת:</strong> <span class="path">backend/routes/authRoutes.js</span>, <span class="path">backend/controllers/authController.js</span></li>
+    <li><strong>מודל:</strong> <span class="path">backend/models/User.js</span></li>
+    <li><strong>הגנה:</strong> <span class="path">backend/middleware/authMiddleware.js</span></li>
+  </ul>
+
+  <h3>פרופיל ועריכה</h3>
+  <ul>
+    <li><strong>דף:</strong> <span class="path">frontend/src/pages/Profile.jsx</span></li>
+    <li><strong>רכיב צ׳אט בפרופיל (אם קיים):</strong> <span class="path">frontend/src/components/ProfileChatPanel.jsx</span></li>
+    <li><strong>שרת:</strong> <span class="path">backend/routes/userRoutes.js</span>, <span class="path">backend/controllers/userController.js</span></li>
+  </ul>
+
+  <h3>פיד — פוסטים, לייקים, תגובות, העלאה</h3>
+  <ul>
+    <li><strong>דף:</strong> <span class="path">frontend/src/pages/Feed.jsx</span></li>
+    <li><strong>שרת:</strong> <span class="path">backend/routes/postRoutes.js</span>, <span class="path">backend/controllers/postController.js</span>, <span class="path">backend/models/Post.js</span></li>
+    <li><strong>העלאת תמונה:</strong> <span class="path">backend/middleware/uploadMiddleware.js</span></li>
+  </ul>
+
+  <h3>בקשות חברות ורשימת חברים</h3>
+  <ul>
+    <li><strong>דף:</strong> <span class="path">frontend/src/pages/Friends.jsx</span></li>
+    <li><strong>שרת:</strong> <span class="path">backend/routes/friendRoutes.js</span>, <span class="path">backend/controllers/friendController.js</span>, <span class="path">backend/models/FriendRequest.js</span></li>
+  </ul>
+
+  <h3>צ׳אט בזמן אמת + היסטוריה</h3>
+  <ul>
+    <li><strong>דף:</strong> <span class="path">frontend/src/pages/Chat.jsx</span> (Socket.IO client, טעינת הודעות מ־REST)</li>
+    <li><strong>שרת Socket:</strong> <span class="path">backend/sockets/chatSocket.js</span></li>
+    <li><strong>REST שיחות:</strong> <span class="path">backend/routes/conversationRoutes.js</span>, <span class="path">backend/controllers/conversationController.js</span></li>
+    <li><strong>מודלים:</strong> <span class="path">backend/models/Conversation.js</span>, <span class="path">backend/models/Message.js</span></li>
+  </ul>
+
+  <h3>ניווט, עיצוב, סטייט גלובלי</h3>
+  <ul>
+    <li><strong>ניתוב:</strong> <span class="path">frontend/src/App.jsx</span></li>
+    <li><strong>מעטפת:</strong> <span class="path">frontend/src/components/Layout.jsx</span></li>
+    <li><strong>MUI / ערכת נושא:</strong> <span class="path">frontend/src/theme/muiTheme.js</span>, <span class="path">frontend/src/styles/global.css</span></li>
+    <li><strong>Redux:</strong> <span class="path">frontend/src/store/store.js</span></li>
+  </ul>
+
+  <h3>העלאות קבצים</h3>
+  <ul>
+    <li><span class="path">backend/middleware/uploadMiddleware.js</span> — תיקיית <span class="path">backend/uploads</span></li>
+  </ul>
+
+  <h3>תיעוד</h3>
+  <ul>
+    <li><span class="path">README.md</span> — התקנה, הרצה, פיצ׳רים, מבנה תיקיות</li>
+  </ul>
+
+  <div class="note">
+    <strong>הבדלים מהניסוח במסמך הקורס:</strong>
+    <ul style="margin-bottom: 0">
+      <li>המסמך מציע JWT ב־localStorage; בקוד הטוקן ב־<strong>sessionStorage</strong>.</li>
+      <li>Tailwind — לא בשימוש; במקום זה <strong>Material UI</strong>.</li>
+      <li>Context API — לא; במקום <strong>Redux Toolkit</strong>.</li>
+      <li>הרחבות אופציונליות + פריסה (Deployment) + סרטון — לא ממומשים בקוד (הסרטון הוא תוצר נפרד).</li>
+    </ul>
+  </div>
+
+  <p class="muted" style="margin-top: 2rem;">— סוף המסמך —</p>
+
+</body>
+</html>

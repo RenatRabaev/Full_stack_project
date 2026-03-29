@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <!--
+    פרופיל סטטי: טאבים (תצוגה, גלריה, עריכה, בקשות חברות, צ'אט דמו). דורש סשן; else login.
+    Deep link: profile.html#requests (או #tab-requests, #friends) פותח טאב בקשות. מסונכרן ל-StaticFriends.
+  -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="פרופיל משתמש — רשת חברתית, דף HTML+CSS" />
+    <meta name="theme-color" content="#5b5bd6" />
+    <title>פרופיל משתמש — רשת חברתית</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./landing.css" />
+  </head>
+  <body>
+    <a class="visually-hidden" href="#main">דלג לתוכן הראשי</a>
+
+    <!-- פרופיל: טאבים (תצוגה, גלריה, עריכה, בקשות, צ'אט) -->
+    <div class="page">
+      <header class="site-header site-header--inner">
+        <div class="site-header__row">
+          <a class="logo" href="./landing.html">רשת חברתית</a>
+          <nav class="site-nav" aria-label="ניווט משני">
+            <a href="./landing.html">דף הבית</a>
+            <a href="./feed.html">פיד</a>
+            <a href="./login.html">התחברות</a>
+            <a href="./register.html">הרשמה</a>
+            <a href="./profile.html" aria-current="page">פרופיל</a>
+            <a href="./about.html">אודות</a>
+          </nav>
+          <nav class="nav-actions nav-actions--with-user" aria-label="חשבון">
+            <div class="static-header-mode" id="staticHeaderGuest">
+              <a class="btn btn--ghost" href="./login.html">התחברות</a>
+              <a class="btn btn--primary" href="./register.html">הרשמה</a>
+            </div>
+            <div class="static-header-mode" id="staticHeaderUser" hidden>
+              <a class="btn btn--ghost" href="./login.html" id="staticLogout">התנתקות</a>
+              <a class="static-user static-user--link" id="staticUserChip" href="./profile.html" aria-live="polite">
+                <span class="static-user__avatar" aria-hidden="true">
+                  <span class="static-user__initials" id="staticUserInitials">?</span>
+                </span>
+                <span class="static-user__name" id="staticUserName">משתמש</span>
+              </a>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      <main id="main" class="profile-page">
+        <h1 class="profile-page__title">פרופיל משתמש</h1>
+
+        <!-- מעבר בין מקטעי התוכן -->
+        <ul class="profile-tabs" role="tablist" aria-label="מקטעי פרופיל">
+          <li>
+            <button type="button" role="tab" id="tab-view" aria-selected="true" aria-controls="panel-view">פרופיל</button>
+          </li>
+          <li>
+            <button type="button" role="tab" id="tab-gallery" aria-selected="false" aria-controls="panel-gallery">גלריה</button>
+          </li>
+          <li>
+            <button type="button" role="tab" id="tab-edit" aria-selected="false" aria-controls="panel-edit">עריכת פרופיל</button>
+          </li>
+          <li>
+            <button type="button" role="tab" id="tab-requests" aria-selected="false" aria-controls="panel-requests">
+              בקשות חברות
+              <span id="tabRequestsBadge" class="profile-tab-badge" hidden aria-hidden="true">0</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" role="tab" id="tab-chat" aria-selected="false" aria-controls="panel-chat">צ׳אט</button>
+          </li>
+        </ul>
+
+        <!-- טאב תצוגה: אווטאר, פרטים, פעילות מהפיד -->
+        <div id="panel-view" role="tabpanel" aria-labelledby="tab-view" class="profile-panel">
+          <div class="profile-card profile-hero">
+            <div class="profile-hero__avatar--single" id="viewAvatarBox" aria-hidden="true">
+              <img id="viewAvatarImg" alt="" />
+              <span class="profile-hero__avatar-letters" id="viewAvatarInitials"></span>
+            </div>
+            <div>
+              <h2 class="auth-card__title" style="margin: 0 0 0.35rem" id="viewName">—</h2>
+              <p id="viewEmail" style="margin: 0; font-size: 0.92rem; color: var(--muted)"></p>
+
+              <div class="profile-field-head">
+                <strong>ביוגרפיה</strong>
+                <button type="button" class="profile-pencil" data-edit="bio" title="עריכת ביוגרפיה" aria-label="עריכת ביוגרפיה">✎</button>
+              </div>
+              <div class="profile-field-view" id="viewBioView"></div>
+              <div class="profile-field-edit" id="viewBioEditor" hidden>
+                <textarea id="inlineBioInput" rows="4"></textarea>
+                <div class="profile-field-edit-actions">
+                  <button type="button" class="btn btn--primary btn--sm" id="inlineBioSave">שמור</button>
+                  <button type="button" class="btn btn--ghost btn--sm" id="inlineBioCancel">ביטול</button>
+                </div>
+              </div>
+
+              <div class="profile-field-head">
+                <strong>טלפון</strong>
+                <button type="button" class="profile-pencil" data-edit="phone" title="עריכת טלפון" aria-label="עריכת טלפון">✎</button>
+              </div>
+              <div class="profile-field-view" id="viewPhoneView"></div>
+              <div class="profile-field-edit" id="viewPhoneEditor" hidden>
+                <input type="text" id="inlinePhoneInput" />
+                <div class="profile-field-edit-actions">
+                  <button type="button" class="btn btn--primary btn--sm" id="inlinePhoneSave">שמור</button>
+                  <button type="button" class="btn btn--ghost btn--sm" id="inlinePhoneCancel">ביטול</button>
+                </div>
+              </div>
+
+              <div class="profile-field-head">
+                <strong>מיקום</strong>
+                <button type="button" class="profile-pencil" data-edit="location" title="עריכת מיקום" aria-label="עריכת מיקום">✎</button>
+              </div>
+              <div class="profile-field-view" id="viewLocationView"></div>
+              <div class="profile-field-edit" id="viewLocationEditor" hidden>
+                <input type="text" id="inlineLocationInput" />
+                <div class="profile-field-edit-actions">
+                  <button type="button" class="btn btn--primary btn--sm" id="inlineLocationSave">שמור</button>
+                  <button type="button" class="btn btn--ghost btn--sm" id="inlineLocationCancel">ביטול</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-card">
+            <h3 class="auth-card__title" style="font-size: 1.1rem; margin: 0 0 0.5rem">פוסטים שלי בפיד</h3>
+            <div id="activityPosts"></div>
+            <p id="activityPostsEmpty" class="note-demo" hidden>עדיין לא פרסמת פוסטים בפיד.</p>
+          </div>
+
+          <div class="profile-card">
+            <h3 class="auth-card__title" style="font-size: 1.1rem; margin: 0 0 0.5rem">תמונות בפוסטים</h3>
+            <div class="profile-gallery" id="activityThumbs"></div>
+            <p id="activityThumbsEmpty" class="note-demo" hidden>אין תמונות בפוסטים שלך.</p>
+          </div>
+
+          <div class="profile-card">
+            <h3 class="auth-card__title" style="font-size: 1.1rem; margin: 0 0 0.5rem">היסטוריית תגובות</h3>
+            <div id="activityComments"></div>
+            <p id="activityCommentsEmpty" class="note-demo" hidden>אין תגובות שפרסמת.</p>
+          </div>
+        </div>
+
+        <!-- טאב גלריה: תמונות מפוסטים + בחירה לעריכה -->
+        <div id="panel-gallery" role="tabpanel" aria-labelledby="tab-gallery" class="profile-panel" hidden>
+          <div class="profile-card">
+            <h3 class="auth-card__title" style="font-size: 1.1rem; margin: 0 0 1rem">גלריית תמונות</h3>
+            <div class="profile-gallery-toolbar">
+              <label class="btn btn--primary" style="cursor: pointer">
+                העלאת תמונה
+                <input type="file" id="galleryUpload" accept="image/*" multiple hidden />
+              </label>
+              <button type="button" class="btn btn--outline" id="galleryEditBtn" aria-pressed="false">
+                עריכת גלריה
+              </button>
+            </div>
+            <div class="profile-gallery" id="galleryTabGrid"></div>
+            <p id="galleryTabEmpty" class="note-demo" hidden>אין תמונות בגלריה.</p>
+            <div class="profile-gallery-bar" id="galleryBottomBar" hidden>
+              <button type="button" class="btn btn--primary" id="galleryDeleteBtn">מחיקה</button>
+              <button type="button" class="btn btn--ghost" id="galleryCancelBtn">ביטול</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- טאב עריכה: טופס שם, ביו, טלפון, מיקום, אווטאר -->
+        <div id="panel-edit" role="tabpanel" aria-labelledby="tab-edit" class="profile-panel" hidden>
+          <div class="profile-card">
+            <h3 class="auth-card__title" style="font-size: 1.1rem; margin: 0 0 1rem">עריכת פרופיל</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-bottom: 1rem">
+              <div class="profile-hero__avatar" id="editAvatarInitials" style="width: 72px; height: 72px; font-size: 1.5rem"></div>
+              <img class="profile-hero__avatar" id="editAvatarImg" alt="" style="width: 72px; height: 72px; display: none" />
+              <label class="btn btn--outline" style="cursor: pointer">
+                החלפת תמונת פרופיל
+                <input type="file" id="avatarInput" accept="image/*" hidden />
+              </label>
+            </div>
+            <form class="form-stack" id="editForm">
+              <div class="form-field">
+                <label for="fName">שם</label>
+                <input id="fName" name="name" type="text" required />
+              </div>
+              <div class="form-field">
+                <label for="fBio">ביוגרפיה</label>
+                <textarea id="fBio" name="bio" rows="4"></textarea>
+              </div>
+              <div class="form-field">
+                <label for="fPhone">טלפון</label>
+                <input id="fPhone" name="phone" type="text" />
+              </div>
+              <div class="form-field">
+                <label for="fLocation">מיקום</label>
+                <input id="fLocation" name="location" type="text" />
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn--primary">שמור שינויים</button>
+              </div>
+            </form>
+            <p id="editSaved" class="note-demo" hidden style="margin-top: 1rem; color: var(--accent)">השינויים נשמרו.</p>
+          </div>
+        </div>
+
+        <!-- טאב בקשות חברות: נכנסות ויוצאות (מקומי) -->
+        <div id="panel-requests" role="tabpanel" aria-labelledby="tab-requests" class="profile-panel" hidden>
+          <div class="profile-card">
+            <h3 class="auth-card__title" style="font-size: 1.1rem; margin: 0 0 0.75rem">בקשות חברות</h3>
+            <div id="requestsAlert" class="profile-requests-alert" role="status" hidden>
+              <strong>יש בקשות חברות נכנסות</strong> —
+              <span id="requestsAlertDetail"></span>
+            </div>
+            <button type="button" class="btn btn--outline" id="addDemoRequest" style="margin-bottom: 1rem">הוסף בקשה נכנסת</button>
+            <h4 class="profile-requests-section-title">נכנסות</h4>
+            <ul id="requestsList" class="form-stack" style="list-style: none; padding: 0; margin: 0; gap: 0.75rem"></ul>
+            <p id="requestsEmpty" class="note-demo" hidden>אין בקשות נכנסות ממתינות.</p>
+            <h4 class="profile-requests-section-title">נשלחו (ממתינות)</h4>
+            <ul id="outgoingList" class="form-stack" style="list-style: none; padding: 0; margin: 0; gap: 0.75rem"></ul>
+            <p id="outgoingEmpty" class="note-demo" hidden>לא שלחת בקשות ממתינות.</p>
+          </div>
+        </div>
+
+        <!-- טאב צ'אט: רשימת שיחות + הודעות -->
+        <div id="panel-chat" role="tabpanel" aria-labelledby="tab-chat" class="profile-panel" hidden>
+          <div class="profile-chat">
+            <div class="profile-chat__threads" id="chatThreads" role="listbox" aria-label="שיחות"></div>
+            <div>
+              <div class="profile-chat__messages" id="chatMessages" aria-live="polite"></div>
+              <form class="form-stack" id="chatForm" style="margin-top: 0.75rem; flex-direction: row; gap: 0.5rem">
+                <input id="chatInput" type="text" placeholder="הקלד הודעה…" style="flex: 1" autocomplete="off" />
+                <button type="submit" class="btn btn--primary">שלח</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- קישורי ניווט -->
+      <footer class="site-footer">
+        <p>
+          <a href="./landing.html">דף הבית</a> · <a href="./feed.html">פיד</a> · <a href="./profile.html">פרופיל</a> ·
+          <a href="./about.html">אודות</a>
+        </p>
+        <p class="site-footer__copyright">
+          <span class="site-footer__copyright-mark" aria-hidden="true">©</span>
+          <span class="site-footer__copyright-text"
+            >זכויות שמורים ל־<span class="site-footer__copyright-name">Renat Rabaev</span></span
+          >
+        </p>
+      </footer>
+    </div>
+
+    <script src="./static-user-nav.js"></script>
+    <script src="./static-friends.js"></script>
+    <!-- לוגיקת פרופיל, טאבים, גלריה, בקשות, צ'אט, hash לטאב בקשות -->
+    <script>
+      /*
+       * פרופיל: חשבונות ב-localStorage; סשן = שם תצוגה + מייל. applyHashToTab — #requests וכו'.
+       */
+      (function () {
+        var NAME_KEY = "sn_static_display_name";
+        var ACCOUNTS_KEY = "sn_static_accounts";
+        var POSTS_KEY = "sn_static_feed_posts";
+        var SESSION_EMAIL_KEY = "sn_static_session_email";
+        var INCOMING_REQ_KEY = "sn_static_incoming_requests";
+        var CHAT_THREADS_KEY = "sn_static_profile_chat_threads";
+        var GALLERY_KEY = "sn_static_profile_gallery";
+        var COMMENT_HISTORY_KEY = "sn_static_comment_history";
+
+        function normEmail(s) {
+          return String(s || "")
+            .trim()
+            .toLowerCase();
+        }
+
+        function getAccounts() {
+          try {
+            var raw = localStorage.getItem(ACCOUNTS_KEY);
+            if (!raw) return [];
+            var a = JSON.parse(raw);
+            return Array.isArray(a) ? a : [];
+          } catch (e) {
+            return [];
+          }
+        }
+
+        function saveAccounts(arr) {
+          localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(arr));
+        }
+
+        /* מבנה אחיד לשדות חשבון (ברירות מחדל לריקים) */
+        function normalizeAccount(a) {
+          return {
+            email: a.email,
+            password: a.password,
+            name: a.name,
+            bio: a.bio != null ? a.bio : "",
+            phone: a.phone != null ? a.phone : "",
+            location: a.location != null ? a.location : "",
+            avatar: a.avatar != null ? a.avatar : "",
+          };
+        }
+
+        /* מזהה אימייל לפי sn_static_session_email או התאמת שם לחשבון */
+        function resolveSessionEmail() {
+          try {
+            var e = sessionStorage.getItem(SESSION_EMAIL_KEY);
+            if (e) return normEmail(e);
+          } catch (e) {}
+          var disp = sessionStorage.getItem(NAME_KEY);
+          if (!disp) return "";
+          var nt = String(disp).trim();
+          var accounts = getAccounts();
+          for (var i = 0; i < accounts.length; i++) {
+            if (String(accounts[i].name || "").trim() === nt) return normEmail(accounts[i].email);
+          }
+          return "";
+        }
+
+        /* החשבון של המשתמש המחובר */
+        function getCurrentAccount() {
+          var email = resolveSessionEmail();
+          if (!email) return null;
+          var accounts = getAccounts();
+          for (var i = 0; i < accounts.length; i++) {
+            if (normEmail(accounts[i].email) === email) return normalizeAccount(accounts[i]);
+          }
+          return null;
+        }
+
+        /* מעדכן חשבונות ישנים למבנה normalizeAccount */
+        function migrateAccounts() {
+          var accounts = getAccounts();
+          var next = accounts.map(normalizeAccount);
+          if (JSON.stringify(accounts) !== JSON.stringify(next))           saveAccounts(next);
+        }
+
+        /* אין סשן — מעבר לדף התחברות */
+        function redirectLogin() {
+          window.location.href = "./login.html";
+        }
+
+        migrateAccounts();
+        var acc = getCurrentAccount();
+        var displayName = "";
+        try {
+          displayName = (sessionStorage.getItem(NAME_KEY) || "").trim();
+        } catch (e) {}
+        if (!acc || !displayName) {
+          redirectLogin();
+          return;
+        }
+
+        /* ראשי תיבות לתצוגת אווטאר */
+        function initials(name) {
+          var parts = String(name || "")
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean);
+          if (parts.length >= 2) return ((parts[0][0] || "") + (parts[1][0] || "")).toUpperCase();
+          if (parts[0]) return parts[0].slice(0, 2).toUpperCase();
+          return "?";
+        }
+
+        /* מעדכן את רשומת החשבון הנוכחי ושם התצוגה */
+        function saveCurrentAccount(updated) {
+          var email = resolveSessionEmail();
+          var accounts = getAccounts();
+          for (var i = 0; i < accounts.length; i++) {
+            if (normEmail(accounts[i].email) === email) {
+              accounts[i] = normalizeAccount(Object.assign({}, accounts[i], updated));
+              saveAccounts(accounts);
+              try {
+                sessionStorage.setItem(NAME_KEY, accounts[i].name);
+              } catch (e) {}
+              return accounts[i];
+            }
+          }
+          return null;
+        }
+
+        /* כל הפוסטים שנשמרו בפיד */
+        function getPosts() {
+          try {
+            var posts = JSON.parse(sessionStorage.getItem(POSTS_KEY) || "[]");
+            return Array.isArray(posts) ? posts : [];
+          } catch (e) {
+            return [];
+          }
+        }
+
+        function savePosts(arr) {
+          sessionStorage.setItem(POSTS_KEY, JSON.stringify(arr));
+        }
+
+        /* פוסטים שמחברם הוא המשתמש הנוכחי */
+        function myPosts() {
+          var a = getCurrentAccount();
+          if (!a) return [];
+          var nm = String(a.name).trim();
+          return getPosts().filter(function (p) {
+            return String(p.author || "").trim() === nm;
+          });
+        }
+
+        /* תמונות שהועלו ידנית לטאב גלריה */
+        function getUploadedGallery() {
+          try {
+            var g = JSON.parse(sessionStorage.getItem(GALLERY_KEY) || "[]");
+            return Array.isArray(g) ? g : [];
+          } catch (e) {
+            return [];
+          }
+        }
+
+        function saveUploadedGallery(arr) {
+          sessionStorage.setItem(GALLERY_KEY, JSON.stringify(arr));
+        }
+
+        function getCommentHistory() {
+          try {
+            var arr = JSON.parse(sessionStorage.getItem(COMMENT_HISTORY_KEY) || "[]");
+            return Array.isArray(arr) ? arr : [];
+          } catch (e) {
+            return [];
+          }
+        }
+
+        /* אווטאר בטאב צפייה — תמונה או אותיות */
+        function renderAvatar() {
+          var a = getCurrentAccount();
+          if (!a) return;
+          var box = document.getElementById("viewAvatarBox");
+          var imgEl = document.getElementById("viewAvatarImg");
+          var initEl = document.getElementById("viewAvatarInitials");
+          if (a.avatar) {
+            imgEl.src = a.avatar;
+            box.classList.add("has-image");
+          } else {
+            imgEl.removeAttribute("src");
+            box.classList.remove("has-image");
+            initEl.textContent = initials(a.name);
+          }
+        }
+
+        /* מילוי שם, מייל, ביו, טלפון, מיקום + אווטאר */
+        function renderHeaderFields() {
+          var a = getCurrentAccount();
+          if (!a) return;
+          document.getElementById("viewName").textContent = a.name;
+          document.getElementById("viewEmail").textContent = a.email;
+          document.getElementById("viewBioView").textContent = a.bio ? a.bio : "אין ביוגרפיה.";
+          document.getElementById("viewPhoneView").textContent = a.phone ? a.phone : "—";
+          document.getElementById("viewLocationView").textContent = a.location ? a.location : "—";
+          renderAvatar();
+        }
+
+        /* סוגר עורכי שדות בשורה (עיפרון) */
+        function closeAllInlineEditors() {
+          ["Bio", "Phone", "Location"].forEach(function (cap) {
+            var ed = document.getElementById("view" + cap + "Editor");
+            var vw = document.getElementById("view" + cap + "View");
+            if (ed) ed.hidden = true;
+            if (vw) {
+              vw.removeAttribute("hidden");
+            }
+          });
+        }
+
+        /* פותח עורך בשורה לשדה ביו / טלפון / מיקום */
+        function openInlineEditor(field) {
+          closeAllInlineEditors();
+          var a = getCurrentAccount();
+          if (!a) return;
+          if (field === "bio") {
+            document.getElementById("viewBioView").hidden = true;
+            document.getElementById("viewBioEditor").hidden = false;
+            document.getElementById("inlineBioInput").value = a.bio || "";
+            document.getElementById("inlineBioInput").focus();
+          } else if (field === "phone") {
+            document.getElementById("viewPhoneView").hidden = true;
+            document.getElementById("viewPhoneEditor").hidden = false;
+            document.getElementById("inlinePhoneInput").value = a.phone || "";
+            document.getElementById("inlinePhoneInput").focus();
+          } else if (field === "location") {
+            document.getElementById("viewLocationView").hidden = true;
+            document.getElementById("viewLocationEditor").hidden = false;
+            document.getElementById("inlineLocationInput").value = a.location || "";
+            document.getElementById("inlineLocationInput").focus();
+          }
+        }
+
+        document.querySelectorAll(".profile-pencil[data-edit]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            openInlineEditor(btn.getAttribute("data-edit"));
+          });
+        });
+
+        document.getElementById("inlineBioSave").addEventListener("click", function () {
+          saveCurrentAccount({ bio: document.getElementById("inlineBioInput").value });
+          closeAllInlineEditors();
+          renderHeaderFields();
+          fillEditForm();
+        });
+        document.getElementById("inlineBioCancel").addEventListener("click", function () {
+          closeAllInlineEditors();
+          renderHeaderFields();
+        });
+
+        document.getElementById("inlinePhoneSave").addEventListener("click", function () {
+          saveCurrentAccount({ phone: document.getElementById("inlinePhoneInput").value.trim() });
+          closeAllInlineEditors();
+          renderHeaderFields();
+          fillEditForm();
+        });
+        document.getElementById("inlinePhoneCancel").addEventListener("click", function () {
+          closeAllInlineEditors();
+          renderHeaderFields();
+        });
+
+        document.getElementById("inlineLocationSave").addEventListener("click", function () {
+          saveCurrentAccount({ location: document.getElementById("inlineLocationInput").value.trim() });
+          closeAllInlineEditors();
+          renderHeaderFields();
+          fillEditForm();
+        });
+        document.getElementById("inlineLocationCancel").addEventListener("click", function () {
+          closeAllInlineEditors();
+          renderHeaderFields();
+        });
+
+        /* טאב ראשי: פוסטים, תמונות מתוך פוסטים, תגובות שכתבת */
+        function renderActivity() {
+          var posts = myPosts();
+          var postsEl = document.getElementById("activityPosts");
+          var postsEmpty = document.getElementById("activityPostsEmpty");
+          postsEl.innerHTML = "";
+          if (posts.length === 0) {
+            postsEmpty.hidden = false;
+          } else {
+            postsEmpty.hidden = true;
+            posts.forEach(function (p) {
+              var div = document.createElement("div");
+              div.className = "profile-activity-item";
+              var t = (p.text || "").trim() || "(פוסט ללא טקסט)";
+              div.innerHTML =
+                "<div>" +
+                escapeHtml(t) +
+                "</div>" +
+                (p.image ? '<div class="profile-activity-meta">כולל תמונה</div>' : "") +
+                '<div class="profile-activity-meta">' +
+                escapeHtml(p.time || "") +
+                "</div>";
+              postsEl.appendChild(div);
+            });
+          }
+
+          var thumbs = document.getElementById("activityThumbs");
+          var thumbsEmpty = document.getElementById("activityThumbsEmpty");
+          thumbs.innerHTML = "";
+          var withImg = posts.filter(function (p) {
+            return p.image;
+          });
+          if (withImg.length === 0) {
+            thumbsEmpty.hidden = false;
+          } else {
+            thumbsEmpty.hidden = true;
+            withImg.forEach(function (p) {
+              var cell = document.createElement("div");
+              cell.className = "profile-gallery__cell";
+              var im = document.createElement("img");
+              im.src = p.image;
+              im.alt = "";
+              cell.appendChild(im);
+              thumbs.appendChild(cell);
+            });
+          }
+
+          var commentsEl = document.getElementById("activityComments");
+          var commentsEmpty = document.getElementById("activityCommentsEmpty");
+          commentsEl.innerHTML = "";
+          var nm = String(getCurrentAccount().name).trim();
+          var nmLower = nm.toLowerCase();
+          var found = [];
+
+          /* מקור ראשי: היסטוריית תגובות מהפיד (כולל תגובות על פוסטים של משתמשים אחרים) */
+          getCommentHistory().forEach(function (c) {
+            var authorName = String(c.author || "").trim().toLowerCase();
+            if (authorName !== nmLower) return;
+            found.push({
+              snippet: String(c.postSnippet || "(פוסט)").slice(0, 80),
+              text: c.text || "",
+              postId: c.postId || "",
+              at: c.at || "",
+            });
+          });
+
+          /* fallback לנתונים ישנים לפני שמירת history ייעודית */
+          if (found.length === 0) {
+            getPosts().forEach(function (post) {
+              var snippet = (post.text || "").trim().slice(0, 80) || "(פוסט)";
+              (post.comments || []).forEach(function (c) {
+                var authorName = String(
+                  c.author || (c.user && (c.user.name || c.user)) || ""
+                ).trim();
+                if (authorName.toLowerCase() === nmLower) {
+                  found.push({
+                    snippet: snippet,
+                    text: c.text || "",
+                    postId: post.id || "",
+                    at: "",
+                  });
+                }
+              });
+            });
+          }
+          if (found.length === 0) {
+            commentsEmpty.hidden = false;
+          } else {
+            commentsEmpty.hidden = true;
+            found.forEach(function (c) {
+              var div = document.createElement("div");
+              div.className = "profile-activity-item";
+              div.innerHTML =
+                "<div><strong>תגובה שלך:</strong> " +
+                escapeHtml(c.text) +
+                "</div>" +
+                '<div class="profile-activity-meta">על פוסט: ' +
+                escapeHtml(c.snippet) +
+                (c.snippet.length >= 80 ? "…" : "") +
+                (c.at ? " · " + escapeHtml(new Date(c.at).toLocaleString("he-IL")) : "") +
+                "</div>" +
+                (c.postId
+                  ? '<div class="profile-activity-meta"><a href="./feed.html#post-' +
+                    encodeURIComponent(c.postId) +
+                    '">פתח בפיד</a></div>'
+                  : "");
+              commentsEl.appendChild(div);
+            });
+          }
+        }
+
+        /* מנקה טקסט לפני הכנסה ל-innerHTML */
+        function escapeHtml(s) {
+          var d = document.createElement("div");
+          d.textContent = s;
+          return d.innerHTML;
+        }
+
+        var galleryEditMode = false;
+
+        /* סרגל תחתון ומצב כפתור «עריכת גלריה» */
+        function setGalleryEditUi() {
+          var bar = document.getElementById("galleryBottomBar");
+          var btn = document.getElementById("galleryEditBtn");
+          bar.hidden = !galleryEditMode;
+          btn.setAttribute("aria-pressed", galleryEditMode ? "true" : "false");
+          if (galleryEditMode) btn.classList.add("btn--outline--active");
+          else btn.classList.remove("btn--outline--active");
+        }
+
+        /* יוצא ממצב סימון תמונות בגלריה */
+        function exitGalleryEditMode() {
+          galleryEditMode = false;
+          setGalleryEditUi();
+          renderGalleryTab();
+        }
+
+        /* בונה רשת גלריה מתמונות פוסטים + העלאות */
+        function renderGalleryTab() {
+          var grid = document.getElementById("galleryTabGrid");
+          var empty = document.getElementById("galleryTabEmpty");
+          grid.innerHTML = "";
+          grid.className = "profile-gallery" + (galleryEditMode ? " profile-gallery--edit" : "");
+          var items = [];
+          var allPosts = getPosts();
+          var nm = String(getCurrentAccount().name).trim();
+          myPosts().forEach(function (p) {
+            if (!p.image) return;
+            var postIndex = -1;
+            for (var j = 0; j < allPosts.length; j++) {
+              if (
+                String(allPosts[j].author || "").trim() === nm &&
+                allPosts[j].image === p.image &&
+                (p.id ? String(allPosts[j].id || "") === String(p.id) : true)
+              ) {
+                postIndex = j;
+                break;
+              }
+            }
+            items.push({
+              kind: "post",
+              postId: p.id || "",
+              postIndex: postIndex,
+              image: p.image,
+              key: "post:" + (p.id || "") + ":" + p.image.slice(0, 40),
+            });
+          });
+          getUploadedGallery().forEach(function (g) {
+            items.push({ kind: "gallery", id: g.id, image: g.dataUrl, key: "ug:" + g.id });
+          });
+          if (items.length === 0) {
+            empty.hidden = false;
+            galleryEditMode = false;
+            document.getElementById("galleryEditBtn").classList.remove("btn--outline--active");
+            document.getElementById("galleryEditBtn").setAttribute("aria-pressed", "false");
+            document.getElementById("galleryBottomBar").hidden = true;
+            return;
+          }
+          empty.hidden = true;
+          items.forEach(function (it) {
+            var cell = document.createElement("div");
+            cell.className = "profile-gallery__cell";
+            cell.dataset.kind = it.kind;
+            if (it.kind === "post") {
+              cell.dataset.postId = it.postId;
+              cell.dataset.postIndex = String(it.postIndex);
+            }
+            if (it.kind === "gallery") cell.dataset.galleryId = it.id;
+            cell.dataset.selectKey = it.key;
+            var im = document.createElement("img");
+            im.src = it.image;
+            im.alt = "";
+            cell.appendChild(im);
+            var ring = document.createElement("button");
+            ring.type = "button";
+            ring.className = "profile-gallery__ring";
+            ring.setAttribute("aria-label", "סמן תמונה לבחירה");
+            ring.innerHTML = '<span class="profile-gallery__ring-mark" aria-hidden="true">✓</span>';
+            ring.addEventListener("click", function (e) {
+              e.stopPropagation();
+              if (!galleryEditMode) return;
+              cell.classList.toggle("is-selected");
+              ring.setAttribute("aria-pressed", cell.classList.contains("is-selected") ? "true" : "false");
+            });
+            cell.appendChild(ring);
+            grid.appendChild(cell);
+          });
+          setGalleryEditUi();
+        }
+
+        document.getElementById("galleryUpload").addEventListener("change", function (ev) {
+          var files = ev.target.files;
+          if (!files || !files.length) return;
+          var list = getUploadedGallery();
+          var remaining = files.length;
+          for (var i = 0; i < files.length; i++) {
+            (function (file) {
+              var r = new FileReader();
+              r.onload = function () {
+                list.push({
+                  id: "ug-" + Date.now() + "-" + i + "-" + Math.random().toString(36).slice(2, 9),
+                  dataUrl: r.result,
+                });
+                remaining--;
+                if (remaining === 0) {
+                  saveUploadedGallery(list);
+                  renderGalleryTab();
+                  renderActivity();
+                }
+              };
+              r.readAsDataURL(file);
+            })(files[i]);
+          }
+          ev.target.value = "";
+        });
+
+        document.getElementById("galleryEditBtn").addEventListener("click", function () {
+          galleryEditMode = !galleryEditMode;
+          setGalleryEditUi();
+          renderGalleryTab();
+        });
+
+        document.getElementById("galleryCancelBtn").addEventListener("click", function () {
+          exitGalleryEditMode();
+        });
+
+        document.getElementById("galleryDeleteBtn").addEventListener("click", function () {
+          var selected = document.querySelectorAll("#galleryTabGrid .profile-gallery__cell.is-selected");
+          if (!selected.length) {
+            alert("סמן תמונה אחת או יותר בעיגול בפינה.");
+            return;
+          }
+          var posts = getPosts();
+          var uploaded = getUploadedGallery();
+          selected.forEach(function (cell) {
+            var kind = cell.dataset.kind;
+            if (kind === "gallery") {
+              var gid = cell.dataset.galleryId;
+              uploaded = uploaded.filter(function (x) {
+                return String(x.id) !== String(gid);
+              });
+            } else if (kind === "post") {
+              var pidx = parseInt(cell.dataset.postIndex, 10);
+              var pid = cell.dataset.postId;
+              if (!isNaN(pidx) && pidx >= 0 && pidx < posts.length) {
+                posts[pidx] = Object.assign({}, posts[pidx], { image: "" });
+              } else if (pid) {
+                posts = posts.map(function (p) {
+                  if (String(p.id) === String(pid)) {
+                    return Object.assign({}, p, { image: "" });
+                  }
+                  return p;
+                });
+              } else {
+                var src = cell.querySelector("img") && cell.querySelector("img").src;
+                if (src) {
+                  posts = posts.map(function (p) {
+                    if (p.image === src) return Object.assign({}, p, { image: "" });
+                    return p;
+                  });
+                }
+              }
+            }
+          });
+          savePosts(posts);
+          saveUploadedGallery(uploaded);
+          exitGalleryEditMode();
+          renderGalleryTab();
+          renderActivity();
+        });
+
+        /* ממלא את טופס עריכת הפרופיל */
+        function fillEditForm() {
+          var a = getCurrentAccount();
+          if (!a) return;
+          document.getElementById("fName").value = a.name;
+          document.getElementById("fBio").value = a.bio;
+          document.getElementById("fPhone").value = a.phone;
+          document.getElementById("fLocation").value = a.location;
+          var imgEl = document.getElementById("editAvatarImg");
+          var initEl = document.getElementById("editAvatarInitials");
+          if (a.avatar) {
+            imgEl.src = a.avatar;
+            imgEl.style.display = "block";
+            initEl.style.display = "none";
+          } else {
+            imgEl.style.display = "none";
+            initEl.style.display = "grid";
+            initEl.textContent = initials(a.name);
+          }
+        }
+
+        document.getElementById("avatarInput").addEventListener("change", function (ev) {
+          var f = ev.target.files && ev.target.files[0];
+          if (!f) return;
+          var r = new FileReader();
+          r.onload = function () {
+            saveCurrentAccount({ avatar: r.result });
+            fillEditForm();
+            renderHeaderFields();
+          };
+          r.readAsDataURL(f);
+          ev.target.value = "";
+        });
+
+        document.getElementById("editForm").addEventListener("submit", function (e) {
+          e.preventDefault();
+          var saved = saveCurrentAccount({
+            name: document.getElementById("fName").value.trim(),
+            bio: document.getElementById("fBio").value,
+            phone: document.getElementById("fPhone").value.trim(),
+            location: document.getElementById("fLocation").value.trim(),
+          });
+          var note = document.getElementById("editSaved");
+          note.hidden = !saved;
+          if (saved) {
+            renderHeaderFields();
+            renderActivity();
+            try {
+              var nameEl = document.getElementById("staticUserName");
+              if (nameEl) nameEl.textContent = saved.name;
+              var ini = document.getElementById("staticUserInitials");
+              if (ini) ini.textContent = initials(saved.name);
+            } catch (e2) {}
+          }
+        });
+
+        /* בקשות חברות נכנסות (מפתח פרופיל) */
+        function loadRequests() {
+          try {
+            var raw = sessionStorage.getItem(INCOMING_REQ_KEY);
+            if (!raw) return [];
+            var a = JSON.parse(raw);
+            return Array.isArray(a) ? a : [];
+          } catch (e) {
+            return [];
+          }
+        }
+
+        function saveRequests(arr) {
+          sessionStorage.setItem(INCOMING_REQ_KEY, JSON.stringify(arr));
+        }
+
+        /* תגית אדומה על טאב בקשות כשיש נכנסות */
+        function updateRequestsTabBadge() {
+          var n = typeof StaticFriends !== "undefined" ? StaticFriends.incomingCount() : loadRequests().length;
+          var badge = document.getElementById("tabRequestsBadge");
+          if (!badge) return;
+          if (n > 0) {
+            badge.textContent = String(n);
+            badge.hidden = false;
+          } else {
+            badge.hidden = true;
+          }
+        }
+
+        /* מצייר נכנסות, יוצאות, התרעה, כפתורי אשר/דחה/ביטול */
+        function renderRequests() {
+          var incoming = loadRequests();
+          var outgoing = typeof StaticFriends !== "undefined" ? StaticFriends.loadOutgoing() : [];
+
+          var alertEl = document.getElementById("requestsAlert");
+          var alertDetail = document.getElementById("requestsAlertDetail");
+          if (alertEl && alertDetail) {
+            var inc = incoming.length;
+            alertEl.hidden = inc === 0;
+            alertDetail.textContent =
+              inc === 0
+                ? ""
+                : inc === 1
+                  ? "יש בקשת חברות אחת שממתינה לתשובתך."
+                  : "יש " + inc + " בקשות שממתינות לתשובתך.";
+          }
+          updateRequestsTabBadge();
+
+          var ul = document.getElementById("requestsList");
+          var empty = document.getElementById("requestsEmpty");
+          ul.innerHTML = "";
+          if (incoming.length === 0) {
+            empty.hidden = false;
+          } else {
+            empty.hidden = true;
+            incoming.forEach(function (r) {
+              var li = document.createElement("li");
+              li.className = "profile-card";
+              li.style.marginBottom = "0";
+              li.style.padding = "0.85rem 1rem";
+              li.innerHTML =
+                "<div style=\"display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:space-between;align-items:center\">" +
+                "<div><strong>" +
+                escapeHtml(r.fromName) +
+                "</strong><br/><span style=\"font-size:0.88rem;color:var(--muted)\">" +
+                escapeHtml(r.fromEmail) +
+                "</span></div>" +
+                "<div style=\"display:flex;gap:0.35rem\">" +
+                "<button type=\"button\" class=\"btn btn--primary btn--sm\" data-id=\"" +
+                r.id +
+                "\" data-act=\"accept\">אשר</button>" +
+                "<button type=\"button\" class=\"btn btn--ghost btn--sm\" data-id=\"" +
+                r.id +
+                "\" data-act=\"reject\">דחה</button>" +
+                "</div></div>";
+              ul.appendChild(li);
+            });
+          }
+
+          var ulOut = document.getElementById("outgoingList");
+          var emptyOut = document.getElementById("outgoingEmpty");
+          if (ulOut && emptyOut) {
+            ulOut.innerHTML = "";
+            if (outgoing.length === 0) {
+              emptyOut.hidden = false;
+            } else {
+              emptyOut.hidden = true;
+              outgoing.forEach(function (r) {
+                var li = document.createElement("li");
+                li.className = "profile-card";
+                li.style.marginBottom = "0";
+                li.style.padding = "0.85rem 1rem";
+                li.innerHTML =
+                  "<div style=\"display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:space-between;align-items:center\">" +
+                  "<div><strong>נשלח ל־" +
+                  escapeHtml(r.toName) +
+                  "</strong><br/><span style=\"font-size:0.88rem;color:var(--muted)\">" +
+                  escapeHtml(r.toEmail || "") +
+                  "</span></div>" +
+                  "<button type=\"button\" class=\"btn btn--ghost btn--sm\" data-id=\"" +
+                  r.id +
+                  "\" data-act=\"cancel-out\">בטל בקשה</button>" +
+                  "</div>";
+                ulOut.appendChild(li);
+              });
+            }
+          }
+
+          var reqPanel = document.getElementById("panel-requests");
+          if (reqPanel) {
+            reqPanel.querySelectorAll("button[data-act]").forEach(function (btn) {
+              btn.addEventListener("click", function () {
+                var id = btn.getAttribute("data-id");
+                var act = btn.getAttribute("data-act");
+                if (act === "cancel-out") {
+                  if (typeof StaticFriends === "undefined") return;
+                  var nextO = StaticFriends.loadOutgoing().filter(function (x) {
+                    return String(x.id) !== String(id);
+                  });
+                  StaticFriends.saveOutgoing(nextO);
+                  renderRequests();
+                  return;
+                }
+                var allIn = loadRequests();
+                var req = allIn.find(function (x) {
+                  return String(x.id) === String(id);
+                });
+                var next = allIn.filter(function (x) {
+                  return String(x.id) !== String(id);
+                });
+                saveRequests(next);
+                if (act === "accept" && req && typeof StaticFriends !== "undefined") {
+                  StaticFriends.addFriendAndSyncChat(req.fromName, req.fromEmail);
+                  renderChatThreads();
+                  renderChatMessages();
+                }
+                renderRequests();
+              });
+            });
+          }
+        }
+
+        document.getElementById("addDemoRequest").addEventListener("click", function () {
+          var arr = loadRequests();
+          arr.unshift({
+            id: "req-" + Date.now(),
+            fromName: "משתמש אורח",
+            fromEmail: "demo" + Math.floor(Math.random() * 900 + 100) + "@example.com",
+          });
+          saveRequests(arr);
+          renderRequests();
+        });
+
+        /* טוען/מאתחל שיחות + מסנכרן חברים ל-StaticFriends */
+        function ensureChatThreads() {
+          if (typeof StaticFriends !== "undefined" && StaticFriends.syncAllFriendsToChat) {
+            StaticFriends.syncAllFriendsToChat();
+          }
+          try {
+            var raw = sessionStorage.getItem(CHAT_THREADS_KEY);
+            if (raw) {
+              var t = JSON.parse(raw);
+              if (Array.isArray(t) && t.length) return t;
+            }
+          } catch (e) {}
+          var initial = [
+            { id: "dm1", title: "אליס", messages: [] },
+            { id: "g1", title: "קבוצת פרויקט", messages: [] },
+          ];
+          sessionStorage.setItem(CHAT_THREADS_KEY, JSON.stringify(initial));
+          return initial;
+        }
+
+        function saveChatThreads(threads) {
+          sessionStorage.setItem(CHAT_THREADS_KEY, JSON.stringify(threads));
+        }
+
+        var activeThreadId = "dm1";
+
+        /* רשימת שיחות בצד */
+        function renderChatThreads() {
+          var threads = ensureChatThreads();
+          var box = document.getElementById("chatThreads");
+          box.innerHTML = "";
+          threads.forEach(function (t) {
+            var b = document.createElement("button");
+            b.type = "button";
+            b.className = "profile-chat__thread";
+            b.setAttribute("role", "option");
+            b.setAttribute("aria-selected", t.id === activeThreadId ? "true" : "false");
+            b.textContent = t.title;
+            b.addEventListener("click", function () {
+              activeThreadId = t.id;
+              renderChatThreads();
+              renderChatMessages();
+            });
+            box.appendChild(b);
+          });
+        }
+
+        /* בועות הודעות לשיחה הנבחרת */
+        function renderChatMessages() {
+          var threads = ensureChatThreads();
+          var thread = threads.find(function (x) {
+            return x.id === activeThreadId;
+          });
+          var wrap = document.getElementById("chatMessages");
+          wrap.innerHTML = "";
+          if (!thread || !thread.messages) return;
+          thread.messages.forEach(function (m) {
+            var div = document.createElement("div");
+            div.className =
+              "profile-chat__bubble " + (m.from === "me" ? "profile-chat__bubble--me" : "profile-chat__bubble--them");
+            div.textContent = m.text;
+            wrap.appendChild(div);
+          });
+          wrap.scrollTop = wrap.scrollHeight;
+        }
+
+        /* שולח הודעה לשיחה הפעילה ושומר */
+        function pushMessage(from, text) {
+          var threads = ensureChatThreads();
+          var thread = threads.find(function (x) {
+            return x.id === activeThreadId;
+          });
+          if (!thread) return;
+          thread.messages.push({ from: from, text: text, at: Date.now() });
+          saveChatThreads(threads);
+          renderChatMessages();
+        }
+
+        document.getElementById("chatForm").addEventListener("submit", function (e) {
+          e.preventDefault();
+          var inp = document.getElementById("chatInput");
+          var v = inp.value.trim();
+          if (!v) return;
+          pushMessage("me", v);
+          inp.value = "";
+          if (activeThreadId === "dm1") {
+            setTimeout(function () {
+              pushMessage("them", "הודעה חוזרת.");
+            }, 600);
+          }
+        });
+
+        /* מיפוי כפתורי טאבים לפאנלים */
+        var tabs = [
+          { btn: document.getElementById("tab-view"), panel: document.getElementById("panel-view") },
+          { btn: document.getElementById("tab-gallery"), panel: document.getElementById("panel-gallery") },
+          { btn: document.getElementById("tab-edit"), panel: document.getElementById("panel-edit") },
+          { btn: document.getElementById("tab-requests"), panel: document.getElementById("panel-requests") },
+          { btn: document.getElementById("tab-chat"), panel: document.getElementById("panel-chat") },
+        ];
+
+        /* מציג טאב אחד ומסתיר את השאר */
+        function selectTab(index) {
+          tabs.forEach(function (t, i) {
+            var on = i === index;
+            t.btn.setAttribute("aria-selected", on ? "true" : "false");
+            t.panel.hidden = !on;
+          });
+        }
+
+        tabs.forEach(function (t, i) {
+          t.btn.addEventListener("click", function () {
+            selectTab(i);
+            if (i === 0) {
+              renderHeaderFields();
+              renderActivity();
+            }
+            if (i === 1) renderGalleryTab();
+            if (i === 2) fillEditForm();
+            if (i === 3) renderRequests();
+            if (i === 4) {
+              renderChatThreads();
+              renderChatMessages();
+            }
+          });
+        });
+
+        /* טאב בקשות חברות כשנטען #requests / #tab-requests / #friends */
+        function applyHashToTab() {
+          var h = String(location.hash || "")
+            .replace(/^#/, "")
+            .toLowerCase();
+          if (h === "requests" || h === "tab-requests" || h === "friends") {
+            selectTab(3);
+            renderRequests();
+            return true;
+          }
+          return false;
+        }
+
+        closeAllInlineEditors();
+        renderHeaderFields();
+        renderActivity();
+        fillEditForm();
+        renderRequests();
+        if (!applyHashToTab()) selectTab(0);
+        window.addEventListener("hashchange", function () {
+          applyHashToTab();
+        });
+      })();
+    </script>
+  </body>
+</html>

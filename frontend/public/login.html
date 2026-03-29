@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <!--
+    התחברות סטטית מול localStorage; אחרי הצלחה — ניווט ליעד מ-StaticSession.consumePostLoginRedirect אם נשמר
+    (מדף הבית), אחרת feed.html. מודל שכחתי סיסמה (דמו); #forgot פותח מודל.
+  -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="התחברות לרשת חברתית — דף HTML+CSS" />
+    <meta name="theme-color" content="#5b5bd6" />
+    <title>התחברות — רשת חברתית</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./landing.css" />
+  </head>
+  <body>
+    <a class="visually-hidden" href="#main">דלג לתוכן הראשי</a>
+
+    <!-- עמוד צר: ניווט + כרטיס התחברות + מודל שכחתי סיסמה -->
+    <div class="page page--narrow">
+      <header class="site-header site-header--inner">
+        <div class="site-header__row">
+          <a class="logo" href="./landing.html">רשת חברתית</a>
+          <nav class="site-nav" aria-label="ניווט משני">
+            <a href="./landing.html">דף הבית</a>
+            <a href="./feed.html">פיד</a>
+            <a href="./register.html">הרשמה</a>
+            <a href="./login.html" aria-current="page">התחברות</a>
+            <a href="./profile.html">פרופיל</a>
+            <a href="./about.html">אודות</a>
+          </nav>
+          <nav class="nav-actions nav-actions--with-user" aria-label="פעולות">
+            <div class="static-header-mode" id="staticHeaderGuest">
+              <a class="btn btn--outline" href="./register.html">חשבון חדש</a>
+            </div>
+            <div class="static-header-mode" id="staticHeaderUser" hidden>
+              <a class="btn btn--ghost" href="./login.html" id="staticLogout">התנתקות</a>
+              <a class="static-user static-user--link" id="staticUserChip" href="./profile.html" aria-live="polite">
+                <span class="static-user__avatar" aria-hidden="true">
+                  <span class="static-user__initials" id="staticUserInitials">?</span>
+                </span>
+                <span class="static-user__name" id="staticUserName">משתמש</span>
+              </a>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      <main id="main" class="auth-main">
+        <article class="auth-card">
+          <h1 class="auth-card__title">התחברות</h1>
+
+          <!-- שגיאות התחברות + קישור להרשמה -->
+          <div id="loginError" class="auth-alert" role="alert" hidden>
+            <span id="loginErrorText"></span>
+            <div class="auth-alert__actions">
+              <a class="btn btn--primary" href="./register.html">עבור להרשמה</a>
+            </div>
+          </div>
+
+          <!-- אימייל וסיסמה מול רשימת חשבונות ב-localStorage -->
+          <form class="form-stack" id="loginForm" action="feed.html" method="get" novalidate>
+            <div class="form-field">
+              <label for="email">אימייל</label>
+              <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+            </div>
+            <div class="form-field">
+              <label for="password">סיסמה</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+                minlength="6"
+                placeholder="••••••••"
+              />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn--primary">התחבר ועבור לפיד</button>
+            </div>
+            <p class="auth-forgot-link-wrap">
+              <button type="button" class="link-button" id="openForgotBtn">שכחתי סיסמה</button>
+            </p>
+          </form>
+
+          <div class="auth-footer-links">
+            אין לך חשבון? <a href="./register.html">הירשם כאן</a>
+          </div>
+        </article>
+
+        <!-- מודל לאיפוס סיסמה (ללא שרת) -->
+        <div id="forgotBackdrop" class="forgot-backdrop" hidden>
+          <div class="forgot-modal" role="dialog" aria-modal="true" aria-labelledby="forgotTitle">
+            <h2 id="forgotTitle">איפוס סיסמה</h2>
+            <div class="form-field">
+              <label for="forgotEmail">אימייל</label>
+              <input id="forgotEmail" type="email" autocomplete="email" placeholder="you@example.com" />
+            </div>
+            <div class="forgot-modal__actions">
+              <button type="button" class="btn btn--ghost" id="forgotCloseBtn">סגור</button>
+              <button type="button" class="btn btn--primary" id="forgotDemoBtn">שלח</button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- קישורי חזרה -->
+      <footer class="site-footer">
+        <p>
+          <a href="./landing.html">חזרה לדף הבית</a> · <a href="./feed.html">פיד</a> ·
+          <a href="./about.html">אודות</a>
+        </p>
+        <p class="site-footer__copyright">
+          <span class="site-footer__copyright-mark" aria-hidden="true">©</span>
+          <span class="site-footer__copyright-text"
+            >זכויות שמורים ל־<span class="site-footer__copyright-name">Renat Rabaev</span></span
+          >
+        </p>
+      </footer>
+    </div>
+    <script src="./static-user-nav.js"></script>
+    <!-- אימות מול חשבונות + מודל שכחתי סיסמה + יעד אחרי login (StaticSession) -->
+    <script>
+      /* לוגין: sessionStorage לשם+מייל; submit מפנה ל-feed או ליעד שנשמר לפני login */
+      (function () {
+        var NAME_KEY = "sn_static_display_name";
+        var ACCOUNTS_KEY = "sn_static_accounts";
+
+        function clearLegacyLocalStorage() {
+          [NAME_KEY, "sn_static_feed_posts"].forEach(function (k) {
+            try {
+              localStorage.removeItem(k);
+            } catch (e) {}
+          });
+        }
+
+        function getAccounts() {
+          try {
+            var raw = localStorage.getItem(ACCOUNTS_KEY);
+            if (!raw) return [];
+            var a = JSON.parse(raw);
+            return Array.isArray(a) ? a : [];
+          } catch (e) {
+            return [];
+          }
+        }
+
+        /* נירמול אימייל */
+        function normEmail(s) {
+          return String(s || "")
+            .trim()
+            .toLowerCase();
+        }
+
+        var form = document.getElementById("loginForm");
+        var errBox = document.getElementById("loginError");
+        var errText = document.getElementById("loginErrorText");
+        var emailInput = document.getElementById("email");
+        var passInput = document.getElementById("password");
+        var forgotBackdrop = document.getElementById("forgotBackdrop");
+        var forgotEmail = document.getElementById("forgotEmail");
+        var openForgotBtn = document.getElementById("openForgotBtn");
+        var forgotCloseBtn = document.getElementById("forgotCloseBtn");
+        var forgotDemoBtn = document.getElementById("forgotDemoBtn");
+        var PREFILL_FORGOT_KEY = "sn_static_forgot_email";
+
+        function hideError() {
+          if (errBox) errBox.hidden = true;
+        }
+
+        /* הצגת שגיאת התחברות */
+        function showError(msg) {
+          if (errText) errText.textContent = msg;
+          if (errBox) errBox.hidden = false;
+        }
+
+        if (emailInput) emailInput.addEventListener("input", hideError);
+        if (passInput) passInput.addEventListener("input", hideError);
+
+        clearLegacyLocalStorage();
+
+        /* פותח מודל איפוס סיסמה; ממלא אימייל מהטופס או מהפסיל */
+        function openForgotModal() {
+          if (!forgotBackdrop) return;
+          if (forgotEmail) {
+            var pre = "";
+            try {
+              pre = sessionStorage.getItem(PREFILL_FORGOT_KEY) || "";
+            } catch (e) {}
+            if (pre) {
+              forgotEmail.value = pre;
+              try {
+                sessionStorage.removeItem(PREFILL_FORGOT_KEY);
+              } catch (e2) {}
+            } else if (emailInput && emailInput.value) {
+              forgotEmail.value = emailInput.value;
+            }
+          }
+          forgotBackdrop.hidden = false;
+          if (forgotEmail) forgotEmail.focus();
+        }
+
+        /* סגירת מודל שכחתי סיסמה */
+        function closeForgotModal() {
+          if (forgotBackdrop) forgotBackdrop.hidden = true;
+        }
+
+        if (openForgotBtn) openForgotBtn.addEventListener("click", openForgotModal);
+        if (forgotCloseBtn) forgotCloseBtn.addEventListener("click", closeForgotModal);
+        if (forgotDemoBtn) {
+          forgotDemoBtn.addEventListener("click", function () {
+            alert("הבקשה נקלטה.");
+            closeForgotModal();
+          });
+        }
+        if (forgotBackdrop) {
+          forgotBackdrop.addEventListener("click", function (ev) {
+            if (ev.target === forgotBackdrop) closeForgotModal();
+          });
+        }
+
+        /* אם הכתובת מסתיימת ב-#forgot — פותח את המודל */
+        function checkForgotHash() {
+          if (location.hash === "#forgot") {
+            openForgotModal();
+            try {
+              history.replaceState(null, "", location.pathname + location.search);
+            } catch (e) {}
+          }
+        }
+        checkForgotHash();
+        window.addEventListener("hashchange", checkForgotHash);
+
+        if (!form) return;
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          hideError();
+
+          var email = normEmail((emailInput || {}).value);
+          var password = String((passInput || {}).value || "");
+
+          if (!email || !password) {
+            showError("נא למלא אימייל וסיסמה.");
+            return;
+          }
+
+          var accounts = getAccounts();
+          if (accounts.length === 0) {
+            showError("אין חשבונות רשומים במכשיר זה. יש להירשם תחילה.");
+            return;
+          }
+
+          var user = null;
+          for (var i = 0; i < accounts.length; i++) {
+            if (normEmail(accounts[i].email) === email) {
+              user = accounts[i];
+              break;
+            }
+          }
+
+          if (!user) {
+            showError("לא נמצא חשבון עם האימייל הזה.");
+            return;
+          }
+
+          if (user.password !== password) {
+            showError("הסיסמה שגויה.");
+            return;
+          }
+
+          var displayName = (user.name && String(user.name).trim()) || email.split("@")[0] || "אורח";
+          sessionStorage.setItem(NAME_KEY, displayName);
+          try {
+            sessionStorage.setItem("sn_static_session_email", email);
+          } catch (e2) {}
+          var next = "";
+          if (window.StaticSession && window.StaticSession.consumePostLoginRedirect) {
+            next = window.StaticSession.consumePostLoginRedirect();
+          }
+          window.location.href = next || "./feed.html";
+        });
+      })();
+    </script>
+  </body>
+</html>

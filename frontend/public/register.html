@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <!-- הרשמה סטטית: חשבון חדש ב-localStorage, כניסה אוטומטית לסשן, מעבר ל-feed.html -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="הרשמה לרשת חברתית — דף HTML+CSS" />
+    <meta name="theme-color" content="#5b5bd6" />
+    <title>הרשמה — רשת חברתית</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./landing.css" />
+  </head>
+  <body>
+    <a class="visually-hidden" href="#main">דלג לתוכן הראשי</a>
+
+    <!-- עמוד צר: כותרת פנימית + כרטיס הרשמה + פוטר -->
+    <div class="page page--narrow">
+      <!-- ניווט משני + מצב אורח/משתמש -->
+      <header class="site-header site-header--inner">
+        <div class="site-header__row">
+          <a class="logo" href="./landing.html">רשת חברתית</a>
+          <nav class="site-nav" aria-label="ניווט משני">
+            <a href="./landing.html">דף הבית</a>
+            <a href="./feed.html">פיד</a>
+            <a href="./login.html">התחברות</a>
+            <a href="./register.html" aria-current="page">הרשמה</a>
+            <a href="./profile.html">פרופיל</a>
+            <a href="./about.html">אודות</a>
+          </nav>
+          <nav class="nav-actions nav-actions--with-user" aria-label="פעולות">
+            <div class="static-header-mode" id="staticHeaderGuest">
+              <a class="btn btn--ghost" href="./login.html">כבר רשום?</a>
+            </div>
+            <div class="static-header-mode" id="staticHeaderUser" hidden>
+              <a class="btn btn--ghost" href="./login.html" id="staticLogout">התנתקות</a>
+              <a class="static-user static-user--link" id="staticUserChip" href="./profile.html" aria-live="polite">
+                <span class="static-user__avatar" aria-hidden="true">
+                  <span class="static-user__initials" id="staticUserInitials">?</span>
+                </span>
+                <span class="static-user__name" id="staticUserName">משתמש</span>
+              </a>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      <main id="main" class="auth-main">
+        <article class="auth-card">
+          <h1 class="auth-card__title">יצירת חשבון</h1>
+
+          <!-- הודעות שגיאה / מייל כבר קיים (מולאות ב-JS) -->
+          <div id="registerError" class="auth-alert" role="alert" hidden>
+            <span id="registerErrorText"></span>
+            <div id="registerErrorActions" class="auth-alert__actions"></div>
+          </div>
+
+          <!-- טופס: שם, אימייל, סיסמה — שליחה ל-localStorage + מעבר לפיד -->
+          <form class="form-stack" id="registerForm" action="feed.html" method="get" novalidate>
+            <div class="form-field">
+              <label for="name">שם משתמש</label>
+              <input id="name" name="name" type="text" autocomplete="name" required placeholder="ישראל ישראלי" />
+            </div>
+            <div class="form-field">
+              <label for="email">אימייל</label>
+              <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+            </div>
+            <div class="form-field">
+              <label for="password">סיסמה (מינימום 6 תווים)</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="new-password"
+                required
+                minlength="6"
+                placeholder="••••••••"
+              />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn--primary">הירשם ועבור לפיד</button>
+            </div>
+          </form>
+
+          <!-- קישור למשתמש קיים -->
+          <div class="auth-footer-links">
+            כבר יש לך חשבון? <a href="./login.html">התחבר</a>
+          </div>
+        </article>
+      </main>
+
+      <!-- קישורי חזרה -->
+      <footer class="site-footer">
+        <p>
+          <a href="./landing.html">חזרה לדף הבית</a> · <a href="./login.html">התחברות</a> ·
+          <a href="./about.html">אודות</a>
+        </p>
+        <p class="site-footer__copyright">
+          <span class="site-footer__copyright-mark" aria-hidden="true">©</span>
+          <span class="site-footer__copyright-text"
+            >זכויות שמורים ל־<span class="site-footer__copyright-name">Renat Rabaev</span></span
+          >
+        </p>
+      </footer>
+    </div>
+    <script src="./static-user-nav.js"></script>
+    <!-- לוגיקת הרשמה, בדיקת מייל כפול, כניסה אוטומטית -->
+    <script>
+      /* הרשמה: הוספת חשבון ל-localStorage, שם+מייל ל-session, redirect ל-feed */
+      (function () {
+        var NAME_KEY = "sn_static_display_name";
+        var ACCOUNTS_KEY = "sn_static_accounts";
+
+        function clearLegacyLocalStorage() {
+          [NAME_KEY, "sn_static_feed_posts"].forEach(function (k) {
+            try {
+              localStorage.removeItem(k);
+            } catch (e) {}
+          });
+        }
+
+        function getAccounts() {
+          try {
+            var raw = localStorage.getItem(ACCOUNTS_KEY);
+            if (!raw) return [];
+            var a = JSON.parse(raw);
+            return Array.isArray(a) ? a : [];
+          } catch (e) {
+            return [];
+          }
+        }
+
+        function saveAccounts(arr) {
+          localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(arr));
+        }
+
+        /* נירמול אימייל להשוואה */
+        function normEmail(s) {
+          return String(s || "")
+            .trim()
+            .toLowerCase();
+        }
+
+        var form = document.getElementById("registerForm");
+        var errBox = document.getElementById("registerError");
+        var errText = document.getElementById("registerErrorText");
+        var errActions = document.getElementById("registerErrorActions");
+        var PREFILL_FORGOT_KEY = "sn_static_forgot_email";
+        var nameInput = document.getElementById("name");
+        var emailInput = document.getElementById("email");
+        var passInput = document.getElementById("password");
+
+        /* מסתיר את תיבת השגיאה */
+        function hideError() {
+          if (errBox) errBox.hidden = true;
+          if (errActions) errActions.innerHTML = "";
+        }
+
+        /* מציג הודעת שגיאה כללית */
+        function showError(msg) {
+          if (errText) errText.textContent = msg;
+          if (errActions) errActions.innerHTML = "";
+          if (errBox) errBox.hidden = false;
+        }
+
+        /* מייל כבר קיים — מציג קישורים להתחברות / איפוס */
+        function showEmailAlreadyRegistered(email) {
+          try {
+            sessionStorage.setItem(PREFILL_FORGOT_KEY, email);
+          } catch (e) {}
+          if (errText) {
+            errText.textContent = "המייל כבר רשום נא להתחבר או לאפס סיסמה";
+          }
+          if (errActions) {
+            errActions.innerHTML =
+              '<a class="btn btn--primary" href="./login.html">התחברות</a>' +
+              '<a class="btn btn--outline" href="./login.html#forgot">איפוס סיסמה</a>';
+          }
+          if (errBox) errBox.hidden = false;
+        }
+
+        if (nameInput) nameInput.addEventListener("input", hideError);
+        if (emailInput) emailInput.addEventListener("input", hideError);
+        if (passInput) passInput.addEventListener("input", hideError);
+
+        clearLegacyLocalStorage();
+
+        if (!form) return;
+        /* שליחת טופס: בדיקות, הוספת חשבון, כניסה אוטומטית לפיד */
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          hideError();
+
+          var name = String((nameInput || {}).value || "").trim();
+          var email = normEmail((emailInput || {}).value);
+          var password = String((passInput || {}).value || "");
+
+          if (!name || !email || !password) {
+            showError("נא למלא שם משתמש, אימייל וסיסמה.");
+            return;
+          }
+
+          if (password.length < 6) {
+            showError("הסיסמה חייבת להכיל לפחות 6 תווים.");
+            return;
+          }
+
+          var accounts = getAccounts();
+          for (var i = 0; i < accounts.length; i++) {
+            if (normEmail(accounts[i].email) === email) {
+              showEmailAlreadyRegistered(email);
+              return;
+            }
+          }
+
+          accounts.push({
+            email: email,
+            password: password,
+            name: name,
+            bio: "",
+            phone: "",
+            location: "",
+            avatar: "",
+          });
+          saveAccounts(accounts);
+          sessionStorage.setItem(NAME_KEY, name);
+          try {
+            sessionStorage.setItem("sn_static_session_email", email);
+          } catch (e2) {}
+          window.location.href = "./feed.html";
+        });
+      })();
+    </script>
+  </body>
+</html>

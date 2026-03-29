@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>מדריך משתמש — דפי HTML סטטיים</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", "Heebo", Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 28px 32px 48px;
+    }
+    h1 {
+      font-size: 1.45rem;
+      border-bottom: 2px solid #3f51b5;
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+    h2 {
+      font-size: 1.12rem;
+      color: #303f9f;
+      margin-top: 1.6rem;
+      margin-bottom: 0.5rem;
+    }
+    p { margin: 0.4rem 0; }
+    ul { margin: 0.35rem 0 0.55rem; padding-right: 1.35rem; }
+    li { margin: 0.22rem 0; }
+    .path {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.92em;
+      background: #f5f5f5;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .note {
+      background: #e8f5e9;
+      border-right: 4px solid #43a047;
+      padding: 10px 14px;
+      margin: 1rem 0;
+      font-size: 0.98em;
+    }
+    .muted { color: #555; font-size: 0.95em; }
+  </style>
+</head>
+<body>
+
+  <h1>מדריך משתמש — דפי HTML סטטיים</h1>
+  <p class="muted">תיאור קצר של כל דף תחת <span class="path">frontend/public/</span>. הנתונים נשמרים מקומית (דפדפן): חשבונות ב־localStorage, מצב מחובר ופעילות סשן ב־sessionStorage.</p>
+
+  <div class="note">
+    <strong>הערה:</strong> אם אתה מפעיל את האתר דרך Vite/build, קבצים זהים עשויים להופיע גם תחת <span class="path">frontend/dist/</span>.
+  </div>
+
+  <h2><span class="path">landing.html</span> — דף הבית</h2>
+  <ul>
+    <li>מציג את רעיון הפרויקט, כפתורי קריאה לפעולה (הרשמה / פיד).</li>
+    <li><strong>מערכת משתמשים:</strong> קרוסלה של כרטיסי משתמשים (רשומים + דמו), עם אינדיקציה אם משתמש «מחובר».</li>
+    <li><strong>שלוש כרטיסי תכונות</strong> (פרופילים / פוסטים / בקשות חברות) פועלים כלחצנים: מחובר — מעבר ישיר ליעד; לא מחובר — מעבר ל־<span class="path">login.html</span> ושמירת יעד להמשך אחרי התחברות מוצלחת.</li>
+    <li>אזור צ'אט מתחלף (דוגמה) עם קישור לפיד.</li>
+    <li>כותרת: מצב אורח / שם משתמש (דרך <span class="path">static-user-nav.js</span>).</li>
+  </ul>
+
+  <h2><span class="path">login.html</span> — התחברות</h2>
+  <ul>
+    <li>אימות מול רשימת החשבונות ב־localStorage.</li>
+    <li>אחרי התחברות מוצלחת: מעבר ליעד שנשמר מדף הבית (אם נלחצה קוביית תכונה לפני ההתחברות), אחרת ברירת מחדל ל־<span class="path">feed.html</span>.</li>
+    <li>מודל «שכחתי סיסמה» (דמו); קישור <span class="path">login.html#forgot</span> פותח את המודל.</li>
+  </ul>
+
+  <h2><span class="path">register.html</span> — הרשמה</h2>
+  <ul>
+    <li>יצירת חשבון חדש ושמירה ב־localStorage.</li>
+    <li>בדיקת מייל כפול; הצעה להתחברות או איפוס סיסמה.</li>
+    <li>אחרי הרשמה: כניסה אוטומטית (שם ומייל בסשן) ומעבר ל־<span class="path">feed.html</span>.</li>
+  </ul>
+
+  <h2><span class="path">feed.html</span> — פיד</h2>
+  <ul>
+    <li>מחבר פוסטים (טקסט ותמונה אופציונלית), רשימת פוסטים סטטית + פוסטים שנשמרו בסשן.</li>
+    <li>לייקים ותגובות לכל פוסט; היסטוריית תגובות שלך לצורך תצוגה בפרופיל.</li>
+    <li>כפתורי «חבר/ה» ליד מחברי פוסטים (דרך <span class="path">static-friends.js</span>).</li>
+    <li>קישור <span class="path">feed.html#post-&lt;id&gt;</span> גולל לפוסט, פותח תגובות ומדגיש את הכרטיס זמנית.</li>
+    <li>לחיצה על תמונת פוסט פותחת תצוגה במסך מלא.</li>
+  </ul>
+
+  <h2><span class="path">profile.html</span> — פרופיל</h2>
+  <ul>
+    <li>דורש משתמש מחובר; אחרת הפניה ל־<span class="path">login.html</span>.</li>
+    <li><strong>טאבים:</strong> תצוגת פרופיל, גלריה, עריכת פרטים, בקשות חברות, צ'אט (דמו).</li>
+    <li>קישור <span class="path">profile.html#requests</span> (או <span class="path">#tab-requests</span>, <span class="path">#friends</span>) פותח ישירות את טאב בקשות החברות.</li>
+    <li>פעילות אחרונה כוללת קישורים לפוסטים ותגובות מהפיד.</li>
+  </ul>
+
+  <h2><span class="path">about.html</span> — אודות</h2>
+  <ul>
+    <li>תוכן הסבר על הפרויקט ומיפוי לדרישות.</li>
+    <li>קישורים לתצוגה מקדימה של ממשק React (כשהשרת רץ) וכפתורים לצפייה בקוד מקור של קבצי HTML (מודל, דרך <span class="path">static-about-modal.js</span>).</li>
+  </ul>
+
+  <p class="muted" style="margin-top: 2rem;">לפירוט פונקציות בקוד ראה <a href="./html-static-functions-reference.html">תיעוד פונקציות לפי דף</a>.</p>
+
+</body>
+</html>

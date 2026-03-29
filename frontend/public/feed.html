@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <!--
+    פיד סטטי: מחבר פוסטים (טקסט+תמונה), פוסטי דמו + פוסטים מהסשן, לייקים/תגובות,
+    היסטוריית תגובות לפרופיל, כפתורי חברות (StaticFriends), deep link feed.html#post-id + הדגשה,
+    לייטבוקס לתמונה. אינטראקציות ב-sessionStorage.
+  -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="פיד — רשת חברתית, דף HTML+CSS" />
+    <meta name="theme-color" content="#5b5bd6" />
+    <title>פיד — רשת חברתית</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./landing.css" />
+  </head>
+  <body>
+    <a class="visually-hidden" href="#main">דלג לתוכן הראשי</a>
+
+    <!-- פיד: כותרת, מחבר פוסט, רשימה (משתמש + פוסטים סטטיים) -->
+    <div class="page">
+      <header class="site-header site-header--inner">
+        <div class="site-header__row">
+          <a class="logo" href="./landing.html">רשת חברתית</a>
+          <nav class="site-nav" aria-label="ניווט משני">
+            <a href="./landing.html">דף הבית</a>
+            <a href="./feed.html" aria-current="page">פיד</a>
+            <a href="./login.html">התחברות</a>
+            <a href="./register.html">הרשמה</a>
+            <a href="./profile.html">פרופיל</a>
+            <a href="./about.html">אודות</a>
+          </nav>
+          <nav class="nav-actions nav-actions--with-user" aria-label="חשבון">
+            <div class="static-header-mode" id="staticHeaderGuest">
+              <a class="btn btn--ghost" href="./login.html">התחברות</a>
+              <a class="btn btn--primary" href="./register.html">הרשמה</a>
+            </div>
+            <div class="static-header-mode" id="staticHeaderUser" hidden>
+              <a class="btn btn--ghost" href="./login.html" id="staticLogout">התנתקות</a>
+              <a class="static-user static-user--link" id="staticUserChip" href="./profile.html" aria-live="polite">
+                <span class="static-user__avatar" aria-hidden="true">
+                  <span class="static-user__initials" id="staticUserInitials">?</span>
+                </span>
+                <span class="static-user__name" id="staticUserName">משתמש</span>
+              </a>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      <main id="main" class="feed-main">
+        <!-- כותרת עמוד -->
+        <div class="feed-header-block">
+          <h1>פיד</h1>
+        </div>
+
+        <!-- פרסום פוסט חדש (נשמר ב-sessionStorage) -->
+        <section class="composer" aria-labelledby="composer-title">
+          <h2 id="composer-title" class="visually-hidden">יצירת פוסט</h2>
+          <span class="composer__label">מה עולה לך בראש?</span>
+          <form id="composerForm" action="feed.html" method="get" novalidate>
+            <textarea
+              id="composerText"
+              name="draft"
+              placeholder="כתוב משהו לחברים…"
+            ></textarea>
+            <!-- תצוגה מקדימה לתמונה שנבחרה (מולא ב-JS) -->
+            <div id="composerPreviewWrap" class="composer-preview-wrap" hidden>
+              <img id="composerPreviewImg" class="composer-preview-wrap__img" alt="תצוגה מקדימה של התמונה לפוסט" />
+              <button type="button" class="btn btn--ghost btn--sm composer-preview-wrap__clear" id="composerPreviewClear">
+                הסר תמונה
+              </button>
+            </div>
+            <div class="composer__row">
+              <label class="file-pill">
+                <span>צרף תמונה</span>
+                <input id="composerImage" type="file" name="img" accept="image/*" />
+              </label>
+              <button type="submit" class="btn btn--primary">פרסם לפיד</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- פוסטים מהמשתמש (מוזרקים ב-JS) + שלושה פוסטים סטטיים -->
+        <section class="post-list" id="staticPostList" aria-label="רשימת פוסטים">
+          <div id="staticUserPosts" aria-live="polite"></div>
+          <article class="post" data-post-id="demo-1">
+            <div class="post__head">
+              <div class="post__avatar" aria-hidden="true">ד</div>
+              <div class="post__meta">
+                <div class="post__name-row">
+                  <div class="post__name">דנה כהן</div>
+                  <button type="button" class="post__add-friend" aria-label="שלח בקשת חברות">
+                    <svg class="post__add-friend-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="8.5" cy="7" r="4" />
+                      <path d="M20 8v6M23 11h-6" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="post__time">לפני שעתיים</div>
+              </div>
+            </div>
+            <p class="post__body">סיימתי את מסכי הפרויקט! ממשק מודרני עם HTML ו־CSS, וחיבור מלא ל־Node בגרסה האמיתית.</p>
+            <div class="post__actions">
+              <button type="button" class="post__action post__action--like" aria-label="לייק">♡ 12</button>
+              <button type="button" class="post__action post__action--comment" aria-label="תגובה">💬 תגובה</button>
+            </div>
+          </article>
+
+          <article class="post" data-post-id="demo-2">
+            <div class="post__head">
+              <div class="post__avatar" aria-hidden="true">י</div>
+              <div class="post__meta">
+                <div class="post__name-row">
+                  <div class="post__name">יונתן לוי</div>
+                  <button type="button" class="post__add-friend" aria-label="שלח בקשת חברות">
+                    <svg class="post__add-friend-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="8.5" cy="7" r="4" />
+                      <path d="M20 8v6M23 11h-6" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="post__time">אתמול</div>
+              </div>
+            </div>
+            <p class="post__body">מזמינים אתכם לקבוצת הלימוד של צ'אט בזמן אמת — Socket.IO עובד מעולה עם החדרים.</p>
+            <div class="post__media post__media--placeholder" role="img" aria-label="מקום לתמונה בפוסט">
+              תצוגת תמונה
+            </div>
+            <div class="post__actions">
+              <button type="button" class="post__action post__action--like" aria-label="לייק">♡ 5</button>
+              <button type="button" class="post__action post__action--comment" aria-label="תגובה">💬 תגובה</button>
+            </div>
+          </article>
+
+          <article class="post" data-post-id="demo-3">
+            <div class="post__head">
+              <div class="post__avatar" aria-hidden="true">א</div>
+              <div class="post__meta">
+                <div class="post__name-row">
+                  <div class="post__name">אתה</div>
+                  <button type="button" class="post__add-friend" aria-label="שלח בקשת חברות" hidden>
+                    <svg class="post__add-friend-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="8.5" cy="7" r="4" />
+                      <path d="M20 8v6M23 11h-6" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="post__time">זה עתה</div>
+              </div>
+            </div>
+            <p class="post__body">ברוכים הבאים לפיד! גלול למעלה כדי לראות את אזור הפרסום.</p>
+            <div class="post__actions">
+              <button type="button" class="post__action post__action--like" aria-label="לייק">♡ 0</button>
+              <button type="button" class="post__action post__action--comment" aria-label="תגובה">💬 תגובה</button>
+            </div>
+          </article>
+        </section>
+      </main>
+
+      <!-- ניווט תחתון -->
+      <footer class="site-footer">
+        <p>
+          <a href="./landing.html">דף הבית</a> · <a href="./login.html">התחברות</a> ·
+          <a href="./register.html">הרשמה</a> ·
+          <a href="./about.html">אודות</a>
+        </p>
+        <p class="site-footer__copyright">
+          <span class="site-footer__copyright-mark" aria-hidden="true">©</span>
+          <span class="site-footer__copyright-text"
+            >זכויות שמורים ל־<span class="site-footer__copyright-name">Renat Rabaev</span></span
+          >
+        </p>
+      </footer>
+    </div>
+
+    <!-- תמונת פוסט במסך מלא (נפתח בלחיצה על img.post__media) -->
+    <div id="postImageLightbox" class="post-image-lightbox" hidden role="dialog" aria-modal="true" aria-label="תמונה במסך מלא">
+      <div class="post-image-lightbox__backdrop"></div>
+      <div class="post-image-lightbox__frame">
+        <button type="button" class="post-image-lightbox__close" aria-label="סגור">×</button>
+        <img id="postImageLightboxImg" class="post-image-lightbox__img" alt="" />
+      </div>
+    </div>
+
+    <script src="./static-user-nav.js"></script>
+    <script src="./static-friends.js"></script>
+    <!-- לוגיקת פוסטים, לייקים, תגובות, deep link מהפרופיל, חברות -->
+    <script>
+      /*
+       * פיד: אחסון פוסטים/אינטראקציות/היסטוריית תגובות ב-sessionStorage; initDemoInteractions לפוסטי דמו;
+       * focusPostFromHash — #post-… פותח תגובות, גולל ומוסיף .post--hash-focus לזמן קצר.
+       */
+      (function () {
+        var NAME_KEY = "sn_static_display_name";
+        var FRIEND_BTN_SVG =
+          '<svg class="post__add-friend-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>' +
+          '<circle cx="8.5" cy="7" r="4"/>' +
+          '<path d="M20 8v6M23 11h-6"/>' +
+          "</svg>";
+        var POSTS_KEY = "sn_static_feed_posts";
+        var MAX_POSTS = 30;
+
+        var INTERACTIONS_KEY = "sn_static_post_interactions";
+        var COMMENT_HISTORY_KEY = "sn_static_comment_history";
+
+        var display = "";
+        try {
+          display = String(sessionStorage.getItem(NAME_KEY) || "").trim();
+        } catch (e) {}
+        if (!display) display = "אורח";
+
+        // לא מוחקים ACCOUNTS_KEY מ-localStorage — שם יושבים החשבונות הרשומים
+        function clearLegacyLocalStorage() {
+          [NAME_KEY, POSTS_KEY, INTERACTIONS_KEY].forEach(function (k) {
+            try {
+              localStorage.removeItem(k);
+            } catch (e) {}
+          });
+        }
+        clearLegacyLocalStorage();
+
+        /* לייקים ותגובות לפוסטים סטטיים — אובייקט לפי מזהה פוסט */
+        function loadInteractions() {
+          try {
+            var o = JSON.parse(sessionStorage.getItem(INTERACTIONS_KEY) || "{}");
+            return o && typeof o === "object" ? o : {};
+          } catch (e) {
+            return {};
+          }
+        }
+
+        /* שומר אינטראקציות פוסטים סטטיים */
+        function saveInteractions(obj) {
+          try {
+            sessionStorage.setItem(INTERACTIONS_KEY, JSON.stringify(obj));
+          } catch (e) {}
+        }
+
+        /* היסטוריית תגובות של המשתמש המחובר (מוצגת בפרופיל) */
+        function loadCommentHistory() {
+          try {
+            var arr = JSON.parse(sessionStorage.getItem(COMMENT_HISTORY_KEY) || "[]");
+            return Array.isArray(arr) ? arr : [];
+          } catch (e) {
+            return [];
+          }
+        }
+
+        function saveCommentHistory(arr) {
+          try {
+            sessionStorage.setItem(COMMENT_HISTORY_KEY, JSON.stringify(arr));
+          } catch (e) {}
+        }
+
+        function rememberMyComment(article, commentText) {
+          var postId = String((article && article.dataset && article.dataset.postId) || "").trim();
+          if (!postId) return;
+          var body = article.querySelector(".post__body");
+          var snippet = body ? String(body.textContent || "").trim().slice(0, 80) : "";
+          if (!snippet) snippet = "(פוסט)";
+          var item = {
+            id: "c-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
+            postId: postId,
+            postSnippet: snippet,
+            text: String(commentText || "").trim(),
+            author: display,
+            at: new Date().toISOString(),
+          };
+          var arr = loadCommentHistory();
+          arr.unshift(item);
+          if (arr.length > 150) arr = arr.slice(0, 150);
+          saveCommentHistory(arr);
+        }
+
+        /* קורא מספר לייקים ומצב לייק של המשתמש מטקסט הכפתור */
+        function parseLikeButton(btn) {
+          var t = (btn && btn.textContent) || "";
+          var n = parseInt(t.replace(/[^\d]/g, ""), 10);
+          if (isNaN(n)) n = 0;
+          return {
+            likes: n,
+            userLiked: btn && btn.classList.contains("post__action--liked"),
+          };
+        }
+
+        /* מצייר מחדש את כפתור הלייק */
+        function renderLikeButton(btn, likes, userLiked) {
+          btn.classList.toggle("post__action--liked", !!userLiked);
+          btn.textContent = (userLiked ? "♥ " : "♡ ") + likes;
+        }
+
+        /* אוסף מצב לייק + תגובות מפריט פוסט לשמירה */
+        function packPostState(article) {
+          var btn = article.querySelector(".post__action--like");
+          var st = parseLikeButton(btn);
+          var comments = [];
+          article.querySelectorAll(".post__comments-list .post__comment-item").forEach(function (row) {
+            var a = row.querySelector(".post__comment-author");
+            var txt = row.querySelector(".post__comment-text");
+            if (a && txt) {
+              comments.push({ author: a.textContent.trim(), text: txt.textContent.trim() });
+            }
+          });
+          return { likes: st.likes, userLiked: st.userLiked, comments: comments };
+        }
+
+        /* משחזר לייקים ותגובות ממצב שמור */
+        function applyPackedState(article, pack) {
+          if (!pack) return;
+          var btn = article.querySelector(".post__action--like");
+          if (btn) {
+            var likes = typeof pack.likes === "number" ? pack.likes : parseLikeButton(btn).likes;
+            renderLikeButton(btn, likes, !!pack.userLiked);
+          }
+          var list = article.querySelector(".post__comments-list");
+          if (list && Array.isArray(pack.comments)) {
+            list.innerHTML = "";
+            pack.comments.forEach(function (c) {
+              appendCommentRow(list, c.author, c.text);
+            });
+          }
+        }
+
+        /* מוסיף שורת תגובה לרשימה */
+        function appendCommentRow(listEl, authorName, commentText) {
+          var row = document.createElement("div");
+          row.className = "post__comment-item";
+          var auth = document.createElement("span");
+          auth.className = "post__comment-author";
+          auth.textContent = authorName;
+          var txt = document.createElement("span");
+          txt.className = "post__comment-text";
+          txt.textContent = commentText;
+          row.appendChild(auth);
+          row.appendChild(txt);
+          listEl.appendChild(row);
+        }
+
+        /* יוצר אזור תגובות + רשימה אם חסרים בפוסט */
+        function ensureCommentUi(article) {
+          if (article.querySelector(".post__comments-list")) return;
+          var panel = document.createElement("div");
+          panel.className = "post__comment-panel";
+          panel.hidden = true;
+          var ta = document.createElement("textarea");
+          ta.className = "post__comment-input";
+          ta.setAttribute("aria-label", "תוכן התגובה");
+          ta.placeholder = "כתוב תגובה…";
+          ta.rows = 2;
+          var send = document.createElement("button");
+          send.type = "button";
+          send.className = "post__comment-send";
+          send.textContent = "שלח תגובה";
+          panel.appendChild(ta);
+          panel.appendChild(send);
+          var listEl = document.createElement("div");
+          listEl.className = "post__comments-list";
+          article.appendChild(panel);
+          article.appendChild(listEl);
+
+          send.addEventListener("click", function () {
+            var v = ta.value.trim();
+            if (!v) return;
+            appendCommentRow(listEl, display, v);
+            rememberMyComment(article, v);
+            ta.value = "";
+            panel.hidden = true;
+            persistPostState(article);
+          });
+        }
+
+        /* שומר מצב פוסט — סטטי ל-interactions, משתמש לרשימת הפוסטים */
+        function persistPostState(article) {
+          var id = article.dataset.postId;
+          if (!id) return;
+          if (String(id).indexOf("demo-") === 0) {
+            var all = loadInteractions();
+            all[id] = packPostState(article);
+            saveInteractions(all);
+          } else {
+            savePostsToStorage();
+          }
+        }
+
+        /* מחליף לייק על פוסט ושומר */
+        function toggleLikeOnPost(article) {
+          var btn = article.querySelector(".post__action--like");
+          if (!btn) return;
+          var st = parseLikeButton(btn);
+          if (st.userLiked) {
+            st.likes = Math.max(0, st.likes - 1);
+            st.userLiked = false;
+          } else {
+            st.likes = st.likes + 1;
+            st.userLiked = true;
+          }
+          renderLikeButton(btn, st.likes, st.userLiked);
+          persistPostState(article);
+        }
+
+        /* פותח/סוגר פאנל כתיבת תגובה */
+        function toggleCommentPanel(article) {
+          ensureCommentUi(article);
+          var panel = article.querySelector(".post__comment-panel");
+          if (panel) panel.hidden = !panel.hidden;
+        }
+
+        /* טוען פוסטים ששמר המשתמש ומצייר אותם */
+        function loadSavedPosts() {
+          var container = document.getElementById("staticUserPosts");
+          if (!container) return;
+          var raw = sessionStorage.getItem(POSTS_KEY);
+          if (!raw) return;
+          var list;
+          try {
+            list = JSON.parse(raw);
+          } catch (e) {
+            return;
+          }
+          if (!Array.isArray(list)) return;
+          list.forEach(function (item) {
+            container.appendChild(
+              buildPostArticle(item.text, item.image || "", item.author || display, item.time || "זה עתה", item)
+            );
+          });
+        }
+
+        /* כותב ל-sessionStorage את כל פוסטי המשתמש מהמיכל */
+        function savePostsToStorage() {
+          var container = document.getElementById("staticUserPosts");
+          if (!container) return;
+          var articles = container.querySelectorAll("article.post");
+          var arr = [];
+          articles.forEach(function (el) {
+            var body = el.querySelector(".post__body");
+            var name = el.querySelector(".post__name");
+            var time = el.querySelector(".post__time");
+            var img = el.querySelector("img.post__media");
+            var pack = packPostState(el);
+            arr.push({
+              id: el.dataset.postId || "",
+              text: body ? body.textContent : "",
+              image: img ? img.getAttribute("src") || "" : "",
+              author: name ? name.textContent : display,
+              time: time ? time.textContent : "זה עתה",
+              likes: pack.likes,
+              userLiked: pack.userLiked,
+              comments: pack.comments,
+            });
+          });
+          if (arr.length > MAX_POSTS) arr = arr.slice(0, MAX_POSTS);
+          try {
+            sessionStorage.setItem(POSTS_KEY, JSON.stringify(arr));
+          } catch (e) {
+            /* quota */
+          }
+        }
+
+        /* בונה אלמנט article לפוסט (כולל כפתור חברות) */
+        function buildPostArticle(text, imageDataUrl, author, timeLabel, state) {
+          state = state || {};
+          var article = document.createElement("article");
+          article.className = "post";
+          article.dataset.postId =
+            state.id || "user-" + Date.now() + "-" + Math.random().toString(36).slice(2, 9);
+          article.id = "post-" + article.dataset.postId;
+
+          var head = document.createElement("div");
+          head.className = "post__head";
+          var av = document.createElement("div");
+          av.className = "post__avatar";
+          av.setAttribute("aria-hidden", "true");
+          av.textContent = (author && author[0]) || "א";
+          var meta = document.createElement("div");
+          meta.className = "post__meta";
+          var nameRow = document.createElement("div");
+          nameRow.className = "post__name-row";
+          var nm = document.createElement("div");
+          nm.className = "post__name";
+          nm.textContent = author || display;
+          var addFriend = document.createElement("button");
+          addFriend.type = "button";
+          addFriend.className = "post__add-friend";
+          addFriend.setAttribute("aria-label", "שלח בקשת חברות");
+          addFriend.innerHTML = FRIEND_BTN_SVG;
+          nameRow.appendChild(nm);
+          nameRow.appendChild(addFriend);
+          var tm = document.createElement("div");
+          tm.className = "post__time";
+          tm.textContent = timeLabel || "זה עתה";
+          meta.appendChild(nameRow);
+          meta.appendChild(tm);
+          head.appendChild(av);
+          head.appendChild(meta);
+          article.appendChild(head);
+
+          if (text) {
+            var p = document.createElement("p");
+            p.className = "post__body";
+            p.textContent = text;
+            article.appendChild(p);
+          }
+
+          if (imageDataUrl) {
+            var imgEl = document.createElement("img");
+            imgEl.className = "post__media";
+            imgEl.src = imageDataUrl;
+            imgEl.alt = "";
+            article.appendChild(imgEl);
+          }
+
+          var actions = document.createElement("div");
+          actions.className = "post__actions";
+          var like = document.createElement("button");
+          like.type = "button";
+          like.className = "post__action post__action--like";
+          like.setAttribute("aria-label", "לייק");
+          var startLikes = typeof state.likes === "number" ? state.likes : 0;
+          renderLikeButton(like, startLikes, !!state.userLiked);
+          var comment = document.createElement("button");
+          comment.type = "button";
+          comment.className = "post__action post__action--comment";
+          comment.setAttribute("aria-label", "תגובה");
+          comment.textContent = "💬 תגובה";
+          actions.appendChild(like);
+          actions.appendChild(comment);
+          article.appendChild(actions);
+
+          ensureCommentUi(article);
+          var listRef = article.querySelector(".post__comments-list");
+          if (listRef && Array.isArray(state.comments) && state.comments.length) {
+            state.comments.forEach(function (c) {
+              appendCommentRow(listRef, c.author || display, c.text || "");
+            });
+          }
+
+          return article;
+        }
+
+        /* מוסיף פוסט חדש למעלה ושומר */
+        function addUserPost(text, imageDataUrl) {
+          var container = document.getElementById("staticUserPosts");
+          if (!container) return;
+          var now = new Date();
+          var timeStr =
+            now.toLocaleDateString("he-IL", { day: "numeric", month: "short" }) +
+            " · " +
+            now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" });
+          var el = buildPostArticle(text, imageDataUrl || "", display, timeStr);
+          container.insertBefore(el, container.firstChild);
+          savePostsToStorage();
+          if (typeof window.StaticFriends !== "undefined") {
+            window.StaticFriends.refreshAllFeedFriendButtons();
+          }
+        }
+
+        var composerForm = document.getElementById("composerForm");
+        var composerText = document.getElementById("composerText");
+        var composerImage = document.getElementById("composerImage");
+        var composerPreviewWrap = document.getElementById("composerPreviewWrap");
+        var composerPreviewImg = document.getElementById("composerPreviewImg");
+        var composerPreviewClear = document.getElementById("composerPreviewClear");
+        // URL זמני לתצוגה מקדימה — חובה לשחרר עם revoke כדי לא לדלוף זיכרון
+        var previewObjectUrl = null;
+
+        function clearComposerImagePreview() {
+          if (previewObjectUrl) {
+            try {
+              URL.revokeObjectURL(previewObjectUrl);
+            } catch (e) {}
+            previewObjectUrl = null;
+          }
+          if (composerPreviewImg) {
+            composerPreviewImg.removeAttribute("src");
+          }
+          if (composerPreviewWrap) composerPreviewWrap.hidden = true;
+        }
+
+        // אחרי בחירת קובץ — מציגים תמונה בתוך המחבר
+        function showComposerImagePreview(file) {
+          clearComposerImagePreview();
+          if (!file || !file.type || !/^image\//.test(file.type)) {
+            return;
+          }
+          previewObjectUrl = URL.createObjectURL(file);
+          if (composerPreviewImg) composerPreviewImg.src = previewObjectUrl;
+          if (composerPreviewWrap) composerPreviewWrap.hidden = false;
+        }
+
+        if (composerImage) {
+          composerImage.addEventListener("change", function () {
+            var f = this.files && this.files[0];
+            showComposerImagePreview(f || null);
+          });
+        }
+        if (composerPreviewClear) {
+          composerPreviewClear.addEventListener("click", function () {
+            if (composerImage) composerImage.value = "";
+            clearComposerImagePreview();
+          });
+        }
+
+        if (composerForm) {
+          /* פרסום פוסט: טקסט ו/או תמונה כ-data URL */
+          composerForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            var text = composerText ? composerText.value.trim() : "";
+            var fileInput = composerImage;
+            var file = fileInput && fileInput.files && fileInput.files[0];
+
+            if (!text && !file) {
+              if (composerText) composerText.focus();
+              return;
+            }
+
+            /* סיום פרסום אחרי קריאת תמונה (או בלי) */
+            function finish(imageDataUrl) {
+              addUserPost(text, imageDataUrl);
+              if (composerText) composerText.value = "";
+              if (fileInput) fileInput.value = "";
+              clearComposerImagePreview();
+            }
+
+            if (file) {
+              var reader = new FileReader();
+              reader.onload = function () {
+                finish(typeof reader.result === "string" ? reader.result : "");
+              };
+              reader.onerror = function () {
+                finish("");
+              };
+              reader.readAsDataURL(file);
+            } else {
+              finish("");
+            }
+          });
+        }
+
+        var postImageLightbox = document.getElementById("postImageLightbox");
+        var postImageLightboxImg = document.getElementById("postImageLightboxImg");
+
+        // פותח תמונת פוסט על כל המסך; סוגר עם רקע / כפתור / Escape
+        function openPostImageLightbox(src) {
+          if (!postImageLightbox || !postImageLightboxImg || !src) return;
+          postImageLightboxImg.src = src;
+          postImageLightboxImg.alt = "תמונה מהפוסט";
+          postImageLightbox.hidden = false;
+          document.body.style.overflow = "hidden";
+        }
+
+        function closePostImageLightbox() {
+          if (!postImageLightbox || !postImageLightboxImg) return;
+          postImageLightbox.hidden = true;
+          postImageLightboxImg.removeAttribute("src");
+          document.body.style.overflow = "";
+        }
+
+        if (postImageLightbox) {
+          var lbBackdrop = postImageLightbox.querySelector(".post-image-lightbox__backdrop");
+          var lbClose = postImageLightbox.querySelector(".post-image-lightbox__close");
+          if (lbBackdrop) lbBackdrop.addEventListener("click", closePostImageLightbox);
+          if (lbClose) lbClose.addEventListener("click", closePostImageLightbox);
+        }
+
+        document.addEventListener("keydown", function (e) {
+          if (e.key !== "Escape") return;
+          if (postImageLightbox && !postImageLightbox.hidden) closePostImageLightbox();
+        });
+
+        var postListEl = document.getElementById("staticPostList");
+        /* לייק / תגובה בלחיצה על אזור הפוסטים */
+        if (postListEl) {
+          postListEl.addEventListener("click", function (e) {
+            var imgTarget = e.target.closest("img.post__media");
+            if (imgTarget && imgTarget.src) {
+              e.preventDefault();
+              openPostImageLightbox(imgTarget.src);
+              return;
+            }
+            var article = e.target.closest("article.post");
+            if (!article) return;
+            if (e.target.closest(".post__action--like")) {
+              e.preventDefault();
+              toggleLikeOnPost(article);
+              return;
+            }
+            if (e.target.closest(".post__action--comment")) {
+              e.preventDefault();
+              toggleCommentPanel(article);
+            }
+          });
+        }
+
+        /* משחזר לייקים/תגובות שמורים לפוסטים הסטטיים הקבועים */
+        function initDemoInteractions() {
+          var all = loadInteractions();
+          ["demo-1", "demo-2", "demo-3"].forEach(function (id) {
+            var art = document.querySelector('[data-post-id="' + id + '"]');
+            if (art && all[id]) applyPackedState(art, all[id]);
+          });
+        }
+
+        var hashFocusTimer = null;
+
+        /* מסיר הדגשת פוסט שנכנס מקישור hash */
+        function clearHashFocusClass() {
+          document.querySelectorAll("article.post.post--hash-focus").forEach(function (node) {
+            node.classList.remove("post--hash-focus");
+          });
+        }
+
+        /* גלילה לפוסט לפי hash, פתיחת פאנל תגובות, מחלקת CSS זמנית; מאזין hashchange בנפרד */
+        function focusPostFromHash() {
+          var hash = String(location.hash || "");
+          if (!hash || hash.indexOf("#post-") !== 0) return;
+          var el = document.getElementById(hash.slice(1));
+          if (!el) return;
+          clearHashFocusClass();
+          if (hashFocusTimer) {
+            clearTimeout(hashFocusTimer);
+            hashFocusTimer = null;
+          }
+          ensureCommentUi(el);
+          var panel = el.querySelector(".post__comment-panel");
+          if (panel) panel.hidden = false;
+          el.classList.add("post--hash-focus");
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          hashFocusTimer = window.setTimeout(function () {
+            el.classList.remove("post--hash-focus");
+            hashFocusTimer = null;
+          }, 4500);
+        }
+
+        window.addEventListener("hashchange", function () {
+          setTimeout(focusPostFromHash, 0);
+        });
+
+        loadSavedPosts();
+        document.querySelectorAll("#staticPostList article.post").forEach(function (art) {
+          ensureCommentUi(art);
+          if (!art.id && art.dataset && art.dataset.postId) art.id = "post-" + art.dataset.postId;
+        });
+        initDemoInteractions();
+        setTimeout(focusPostFromHash, 0);
+
+        if (typeof window.StaticFriends !== "undefined") {
+          window.StaticFriends.bindFeedFriendButtons();
+        }
+      })();
+    </script>
+  </body>
+</html>

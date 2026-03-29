@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <!-- אודות: תוכן הסבר + קישורי React (כשזמין) + מודל קוד HTML (static-about-modal.js); כותרת: static-user-nav -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="אודות האתר — מיפוי דפים לדרישות פרויקט גמר: רשת חברתית Full Stack"
+    />
+    <meta name="theme-color" content="#5b5bd6" />
+    <title>אודות האתר — רשת חברתית</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./landing.css" />
+  </head>
+  <body>
+    <a class="visually-hidden" href="#main">דלג לתוכן הראשי</a>
+
+    <div class="page">
+      <header class="site-header site-header--inner">
+        <div class="site-header__row">
+          <a class="logo" href="./landing.html">רשת חברתית</a>
+          <nav class="site-nav" aria-label="ניווט משני">
+            <a href="./landing.html">דף הבית</a>
+            <a href="./feed.html">פיד</a>
+            <a href="./login.html">התחברות</a>
+            <a href="./register.html">הרשמה</a>
+            <a href="./profile.html">פרופיל</a>
+            <a href="./about.html" aria-current="page">אודות</a>
+          </nav>
+          <nav class="nav-actions nav-actions--with-user" aria-label="חשבון">
+            <div class="static-header-mode" id="staticHeaderGuest">
+              <a class="btn btn--ghost" href="./login.html">התחברות</a>
+              <a class="btn btn--primary" href="./register.html">הרשמה</a>
+            </div>
+            <div class="static-header-mode" id="staticHeaderUser" hidden>
+              <a class="btn btn--ghost" href="./login.html" id="staticLogout">התנתקות</a>
+              <a class="static-user static-user--link" id="staticUserChip" href="./profile.html" aria-live="polite">
+                <span class="static-user__avatar" aria-hidden="true">
+                  <span class="static-user__initials" id="staticUserInitials">?</span>
+                </span>
+                <span class="static-user__name" id="staticUserName">משתמש</span>
+              </a>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      <main id="main" class="about-main">
+        <header class="about-hero">
+          <p class="hero__badge">תיעוד · פרויקט גמר</p>
+          <h1 class="about-hero__title">אודות האתר</h1>
+          <p class="hero__lead about-hero__lead">
+            כאן מרוכזים מטרת הפרויקט, הארכיטקטורה, והסבר על כל דף — בהתאם למסמך דרישות (רשת חברתית עם
+            React, Node, Socket.IO ומסד נתונים). השימוש בדפי HTML+CSS הוא להדגמה ויזואלית; האפליקציה המלאה
+            רצה ב־React ומחוברת לשרת.
+          </p>
+        </header>
+
+        <section class="stack about-stack" aria-label="ארכיטקטורה טכנית">
+          <div class="stack__item">
+            צד לקוח
+            <small>React · ממשק משתמש</small>
+          </div>
+          <div class="stack__item">
+            צד שרת
+            <small>Node.js · Express</small>
+          </div>
+          <div class="stack__item">
+            בזמן אמת
+            <small>Socket.IO</small>
+          </div>
+          <div class="stack__item">
+            מסד נתונים
+            <small>MongoDB</small>
+          </div>
+        </section>
+
+        <section class="about-section" aria-labelledby="about-goal">
+          <h2 id="about-goal">מטרת הפרויקט (לפי דרישות הקורס)</h2>
+          <div class="about-prose">
+            <p>
+              לפתח מערכת חברתית בסיסית הכוללת <strong>משתמשים</strong>, <strong>פרופילים אישיים</strong>,
+              <strong>פוסטים</strong>, <strong>ניהול בקשות חברות</strong>, ו<strong>תקשורת בזמן אמת</strong> (צ'אט
+              פרטי וקבוצתי), עם חיבור בין צד לקוח לשרת ואחסון נתונים במסד.
+            </p>
+            <p>
+              בצד השרת: <strong>REST API</strong>, אימות עם <strong>bcrypt</strong> ו־<strong>JWT</strong>,
+              <strong>multer</strong> להעלאות, ו־<strong>Socket.IO</strong> לצ'אט. בצד הלקוח: ממשק רספונסיבי
+              (Material UI), ניווט (React Router), וניהול מצב גלובלי (Redux).
+            </p>
+          </div>
+        </section>
+
+        <section class="about-section" aria-labelledby="about-pages">
+          <h2 id="about-pages">מפת דפים — שימוש ודרישה</h2>
+          <p class="about-section__intro">
+            הכרטיסיות הבאות מקשרות בין <strong>קבצים</strong> (או נתיבי React) לבין <strong>מה שהמסמך דורש</strong>.
+            קישור &quot;תצוגה מקדימה&quot; מוביל לאפליקציית React (מומלץ: <code>npm run dev</code> ב־Vite, פורט 5173).
+            כפתור &quot;קוד HTML&quot; פותח חלון עם קוד המקור של קובץ ה־HTML הסטטי.
+          </p>
+
+          <div class="about-cards-grid">
+            <article class="about-card" style="--about-delay: 0ms">
+              <span class="about-card__pill about-card__pill--static">HTML+CSS</span>
+              <h3 class="about-card__title">דף הבית</h3>
+              <p class="about-card__file"><code>landing.html</code></p>
+              <p class="about-card__text">
+                נקודת כניסה לפרויקט: הצגת רעיון המערכת, פס טכנולוגיות, תכונות עיקריות וקריאה לפעולה (הרשמה /
+                פיד). מיועד לביקור ראשון ולהצגה בפני בודקים.
+              </p>
+              <p class="about-card__req"><strong>בהתאם לדרישה:</strong> הצגת המערכת והממשק המודרני.</p>
+              <div class="about-card__links">
+                <button type="button" class="about-card__link" data-html-source="landing.html">קוד HTML</button>
+                <a class="about-card__link about-card__link--primary" href="./landing.html">פתח דף</a>
+              </div>
+            </article>
+
+            <article class="about-card" style="--about-delay: 55ms">
+              <span class="about-card__pill about-card__pill--both">סטטי + React</span>
+              <h3 class="about-card__title">התחברות</h3>
+              <p class="about-card__file"><code>login.html</code> · React <code>/login</code></p>
+              <p class="about-card__text">
+                הזנת אימייל וסיסמה. בגרסת React הנתונים נשלחים ל־API; הטוקן (JWT) נשמר ב־sessionStorage. הדף
+                הסטטי מדגים טופס וממשק בלי חובת שרת.
+              </p>
+              <p class="about-card__req"><strong>בהתאם לדרישה:</strong> אימות משתמשים, שמירת JWT בצד הלקוח.</p>
+              <div class="about-card__links">
+                <button type="button" class="about-card__link" data-html-source="login.html">קוד HTML</button>
+                <a class="about-card__link about-card__link--primary" href="./login.html">תצוגה מקדימה</a>
+              </div>
+            </article>
+
+            <article class="about-card" style="--about-delay: 110ms">
+              <span class="about-card__pill about-card__pill--both">סטטי + React</span>
+              <h3 class="about-card__title">הרשמה</h3>
+              <p class="about-card__file"><code>register.html</code> · React <code>/register</code></p>
+              <p class="about-card__text">
+                יצירת משתמש חדש; בשרת הסיסמה מוצפנת ב־bcrypt. לאחר הרשמה מקבלים JWT וממשיכים לאפליקציה.
+              </p>
+              <p class="about-card__req"><strong>בהתאם לדרישה:</strong> הרשמה ואימות סיסמאות.</p>
+              <div class="about-card__links">
+                <button type="button" class="about-card__link" data-html-source="register.html">קוד HTML</button>
+                <a class="about-card__link about-card__link--primary" href="./register.html">תצוגה מקדימה</a>
+              </div>
+            </article>
+
+            <article class="about-card" style="--about-delay: 165ms">
+              <span class="about-card__pill about-card__pill--both">סטטי + React</span>
+              <h3 class="about-card__title">פיד</h3>
+              <p class="about-card__file"><code>feed.html</code> · React <code>/feed</code></p>
+              <p class="about-card__text">
+                צפייה בפוסטים, יצירת פוסט עם טקסט ותמונה, לייקים ותגובות. ב־React הנתונים מגיעים מהשרת
+                (MongoDB); בדף הסטטי יש פוסטים לדוגמה ו־sessionStorage לפוסטים מקומיים.
+              </p>
+              <p class="about-card__req"><strong>בהתאם לדרישה:</strong> פוסטים, לייקים, תגובות, מדיה.</p>
+              <div class="about-card__links">
+                <button type="button" class="about-card__link" data-html-source="feed.html">קוד HTML</button>
+                <a class="about-card__link about-card__link--primary" href="./feed.html">תצוגה מקדימה</a>
+              </div>
+            </article>
+
+            <article class="about-card" style="--about-delay: 220ms">
+              <span class="about-card__pill about-card__pill--both">סטטי + React</span>
+              <h3 class="about-card__title">פרופיל</h3>
+              <p class="about-card__file"><code>profile.html</code> · React <code>/profile</code>, <code>/users/:id</code></p>
+              <p class="about-card__text">
+                הצגת פרטים, ביוגרפיה, תמונת פרופיל, טלפון ומיקום; עריכה וגלריה. צפייה בפרופיל משתמש אחר
+                בנתיב <code>/users/:id</code>.
+              </p>
+              <p class="about-card__req"><strong>בהתאם לדרישה:</strong> פרופיל אישי ועריכה (כולל תמונה).</p>
+              <div class="about-card__links">
+                <button type="button" class="about-card__link" data-html-source="profile.html">קוד HTML</button>
+                <a class="about-card__link about-card__link--primary" href="./profile.html">תצוגה מקדימה</a>
+              </div>
+            </article>
+
+            <article class="about-card" style="--about-delay: 275ms">
+              <span class="about-card__pill about-card__pill--react">React</span>
+              <h3 class="about-card__title">חברויות</h3>
+              <p class="about-card__file">React <code>/friends</code></p>
+              <p class="about-card__text">
+                גילוי משתמשים, חיפוש, שליחת בקשת חברות, אישור או דחייה, רשימת חברים ופתיחת שיחה ישירה.
+              </p>
+              <p class="about-card__req"><strong>בהתאם לדרישה:</strong> בקשות חברות ורשימת חברים.</p>
+              <div class="about-card__links about-card__links--single">
+                <a
+                  class="about-card__link about-card__link--primary js-react-preview"
+                  href="./landing.html"
+                  data-react-path="/friends"
+                  >תצוגה מקדימה</a
+                >
+              </div>
+            </article>
+
+            <article class="about-card" style="--about-delay: 330ms">
+              <span class="about-card__pill about-card__pill--react">React</span>
+              <h3 class="about-card__title">צ'אט</h3>
+              <p class="about-card__file">React <code>/chat</code></p>
+              <p class="about-card__text">
+                רשימת שיחות, הודעות בזמן אמת עם Socket.IO, היסטוריה מהמסד, שיחות יחד ליחד וקבוצתיות.
+              </p>
+              <p class="about-card__req"><strong>בהתאם לדרישה:</strong> תקשורת בזמן אמת ושמירת הודעות.</p>
+              <div class="about-card__links about-card__links--single">
+                <a
+                  class="about-card__link about-card__link--primary js-react-preview"
+                  href="./landing.html"
+                  data-react-path="/chat"
+                  >תצוגה מקדימה</a
+                >
+              </div>
+            </article>
+
+            <article class="about-card about-card--highlight" style="--about-delay: 385ms">
+              <span class="about-card__pill about-card__pill--static">HTML+CSS</span>
+              <h3 class="about-card__title">אודות (דף זה)</h3>
+              <p class="about-card__file"><code>about.html</code></p>
+              <p class="about-card__text">
+                תיעוד מרוכז לבודקים ולמגישים: מיפוי דרישות, דפים, וטכנולוגיות. אינו חלק ממסלול המשתמש הרגיל
+                אלא מסייע בהבנת הפרויקט.
+              </p>
+              <p class="about-card__req"><strong>תוצר:</strong> תיעוד (משלים ל־README).</p>
+              <div class="about-card__links about-card__links--single">
+                <button type="button" class="about-card__link" data-html-source="about.html">קוד HTML</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="about-note" aria-labelledby="about-note-title">
+          <h2 id="about-note-title">הבהרה: שתי שכבות ממשק</h2>
+          <ul>
+            <li>
+              <strong>דפי HTML+CSS</strong> בתיקייה <code>public/</code> — עיצוב אחיד עם <code>landing.css</code>,
+              מתאימים להצגה מהירה ולפיתוח ממשק בלי הרצת שרת (חלק מהדפים משתמשים ב־localStorage/sessionStorage
+              לדמו מקומי).
+            </li>
+            <li>
+              <strong>אפליקציית React</strong> (Vite) — המימוש המלא מול ה־API, JWT, העלאות, וצ'אט בזמן אמת. יש
+              להריץ <code>backend</code> ו־<code>frontend</code> לפי README.
+            </li>
+          </ul>
+        </section>
+
+        <footer class="site-footer">
+          <p>
+            דפי <strong>HTML+CSS</strong>:
+            <a href="./landing.html">בית</a> ·
+            <a href="./login.html">התחברות</a> ·
+            <a href="./register.html">הרשמה</a> ·
+            <a href="./feed.html">פיד</a> ·
+            <a href="./profile.html">פרופיל</a> ·
+            <a href="./about.html" aria-current="page">אודות</a>.
+          </p>
+          <p class="site-footer__copyright">
+            <span class="site-footer__copyright-mark" aria-hidden="true">©</span>
+            <span class="site-footer__copyright-text"
+              >זכויות שמורים ל־<span class="site-footer__copyright-name">Renat Rabaev</span></span
+            >
+          </p>
+        </footer>
+      </main>
+    </div>
+
+    <div id="htmlSourceModal" class="html-source-modal" hidden>
+      <div class="html-source-modal__backdrop" tabindex="-1" aria-hidden="true"></div>
+      <div
+        class="html-source-modal__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="htmlSourceTitle"
+      >
+        <div class="html-source-modal__header">
+          <h2 id="htmlSourceTitle" class="html-source-modal__title">קוד מקור</h2>
+          <button type="button" id="htmlSourceModalClose" class="html-source-modal__close" aria-label="סגור">
+            ×
+          </button>
+        </div>
+        <p id="htmlSourceError" class="html-source-modal__err" hidden></p>
+        <pre class="html-source-modal__pre" dir="ltr"><code id="htmlSourceCode" class="html-source-modal__code"></code></pre>
+      </div>
+    </div>
+
+    <script src="./static-user-nav.js"></script>
+    <script src="./static-about-modal.js"></script>
+  </body>
+</html>
